@@ -1,0 +1,60 @@
+strict: true
+excluded:
+  - .build
+  - .swiftpm
+  - DerivedData
+
+opt_in_rules:
+  - file_name
+  - one_declaration_per_file
+  - explicit_top_level_acl
+  - force_unwrapping
+  - sorted_imports
+  - empty_count
+  - first_where
+  - contains_over_first_not_nil
+  - redundant_type_annotation
+  - toggle_bool
+  - private_swiftui_state
+  - unneeded_parentheses_in_closure_argument
+disabled_rules:
+  - nesting
+  - trailing_comma
+  - opening_brace
+line_length:
+  warning: 160
+  ignores_urls: true
+identifier_name:
+  min_length: 1
+  excluded: [id, x, y]
+type_name:
+  min_length: 2
+file_name:
+  nested_type_separator: "."
+
+custom_rules:
+  no_comments:
+    name: No comments
+    regex: '(?://|/\*)(?!\s*(?:Workaround:|swiftlint:))'
+    match_kinds: [comment, doccomment]
+    message: "No comments; clear names instead. Sole exception: one line `// Workaround: …` on a non-obvious framework workaround."
+    severity: error
+  utilitieskit_imports:
+    name: Utilitieskit imports
+    included: 'Sources/.*\.swift'
+    regex: '^import\s+(?!Foundation\b|Synchronization\b|Observation\b)\w+'
+    match_kinds: [keyword, identifier]
+    message: "UtilitiesKit imports Foundation only."
+    severity: error
+  utilitieskit_platform_conditionals:
+    name: Utilitieskit platform conditionals
+    included: 'Sources/.*\.swift'
+    regex: '#if\s+(os|canImport)\('
+    message: "UtilitiesKit is platform-independent: no #if os."
+    severity: error
+  injected_time_and_locale:
+    name: Injected time and locale
+    included: 'Sources/.*\.swift'
+    regex: '(Date\(\)|Locale\.current|Calendar\.current|TimeZone\.current)'
+    message: "Inject clock, locale, calendar and time zone."
+    severity: error
