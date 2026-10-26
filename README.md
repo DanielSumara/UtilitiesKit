@@ -1,6 +1,6 @@
 # UtilitiesKit
 
-Domain-agnostic Swift utilities for iOS, iPadOS and macOS apps: locale-aware formatters and parsers, composable validators, and small contracts (logging, wall clock, preferences) that apps implement and inject.
+Domain-agnostic Swift utilities for iOS, iPadOS and macOS apps: locale-aware formatters and parsers, composable validators, and small contracts (logging, wall clock) that apps implement and inject.
 
 > Status: empty; utilities arrive with the specs that need them (`docs/specs/`).
 
