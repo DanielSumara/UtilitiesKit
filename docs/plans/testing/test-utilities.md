@@ -74,8 +74,8 @@ Depends on: —
 |---|---|---|---|---|
 | S1 | Done | 0f83fdc | 5248b2e | 0 fixed / 0 rejected |
 | S2 | Done | 5248b2e | 4afd9d3 | 0 fixed / 0 rejected |
-| S3 | In progress | 4afd9d3 | — | — |
-| S4 | Pending | — | — | — |
+| S3 | Done | 4afd9d3 | 8ad108f | 2 fixed / 0 rejected |
+| S4 | In progress | 8ad108f | — | — |
 
 ## Open questions
 - None
