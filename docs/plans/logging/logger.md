@@ -66,7 +66,7 @@ Depends on: —
 | Slice | Status | Base | Head | Review |
 |---|---|---|---|---|
 | S1 | Done | ba55090 | c53f6cc | 0 fixed / 0 rejected |
-| S2 | Pending | — | — | — |
+| S2 | Done | c9422ef | e77f54a | 0 fixed / 0 rejected |
 | S3 | Pending | — | — | — |
 
 ## Open questions
