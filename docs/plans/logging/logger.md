@@ -65,7 +65,7 @@ Depends on: —
 ## Progress
 | Slice | Status | Base | Head | Review |
 |---|---|---|---|---|
-| S1 | Pending | — | — | — |
+| S1 | Done | ba55090 | c53f6cc | 0 fixed / 0 rejected |
 | S2 | Pending | — | — | — |
 | S3 | Pending | — | — | — |
 
