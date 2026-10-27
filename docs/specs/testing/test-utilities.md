@@ -1,5 +1,5 @@
 # Test utilities
-Status: Approved · Level: capability · Repo: UtilitiesKit · Feature: testing · Module or target: TestUtilitiesKit, TestUtilitiesKitTests · Depends on: logging/logger
+Status: Planned · Level: capability · Repo: UtilitiesKit · Feature: testing · Module or target: TestUtilitiesKit, TestUtilitiesKitTests · Depends on: logging/logger
 
 ## Goal
 TestUtilitiesKit is a test-only product of the UtilitiesKit package that every unit test target links (Q-1). One test covers Polish and English: it runs once per test language, and each expectation picks its expected value for the locale under test (Q-2, Q-3). A failure points at the line of the expected value and shows only the fields that differ (krzysztofzablocki/Difference).
