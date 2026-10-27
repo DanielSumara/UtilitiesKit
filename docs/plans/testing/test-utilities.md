@@ -72,8 +72,8 @@ Depends on: —
 ## Progress
 | Slice | Status | Base | Head | Review |
 |---|---|---|---|---|
-| S1 | In progress | 0f83fdc | — | — |
-| S2 | Pending | — | — | — |
+| S1 | Done | 0f83fdc | 5248b2e | 0 fixed / 0 rejected |
+| S2 | In progress | 5248b2e | — | — |
 | S3 | Pending | — | — | — |
 | S4 | Pending | — | — | — |
 
