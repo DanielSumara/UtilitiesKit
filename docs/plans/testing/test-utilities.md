@@ -1,7 +1,7 @@
 # Test utilities — implementation plan
 Spec: UtilitiesKit/docs/specs/testing/test-utilities.md
 Repo: UtilitiesKit
-Status: In progress
+Status: Done
 Run base: 0f83fdce052ced87ce7532902617ea1984743536
 Depends on: —
 
@@ -75,7 +75,7 @@ Depends on: —
 | S1 | Done | 0f83fdc | 5248b2e | 0 fixed / 0 rejected |
 | S2 | Done | 5248b2e | 4afd9d3 | 0 fixed / 0 rejected |
 | S3 | Done | 4afd9d3 | 8ad108f | 2 fixed / 0 rejected |
-| S4 | In progress | 8ad108f | — | — |
+| S4 | Done | 8ad108f | b40fb0d | 0 fixed / 0 rejected |
 
 ## Open questions
 - None

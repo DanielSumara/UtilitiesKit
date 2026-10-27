@@ -1,5 +1,5 @@
 # Test utilities
-Status: Planned · Level: capability · Repo: UtilitiesKit · Feature: testing · Module or target: TestUtilitiesKit, TestUtilitiesKitTests · Depends on: logging/logger
+Status: Implemented · Level: capability · Repo: UtilitiesKit · Feature: testing · Module or target: TestUtilitiesKit, TestUtilitiesKitTests · Depends on: logging/logger
 
 ## Goal
 TestUtilitiesKit is a test-only product of the UtilitiesKit package that every unit test target links (Q-1). One test covers Polish and English: it runs once per test language, and each expectation picks its expected value for the locale under test (Q-2, Q-3). A failure points at the line of the expected value and shows only the fields that differ (krzysztofzablocki/Difference).
@@ -77,3 +77,4 @@ TestUtilitiesKitTests check recorded issues with `withKnownIssue { … } matchin
 - 2026-10-27 Drafted from the user's LocaleMatch files and Difference; placement, test languages, match key, `true` with one issue, comments (Q-1–Q-5) (create-spec)
 - 2026-10-27 English locale `en_GB` (Data, BR-3, AC-1, AC-2, AC-9, Q-6); Difference pinned to 1.1.0 (BR-1, AC-10, Q-7); `Optional.match` dropped, optionals through `Equatable.match` (Scope, Data, BR-8, AC-7, AC-13, Q-8); fallback when Difference gives no lines (BR-5, AC-3); locale without a language code (AC-5); duplicates per entry in every locale (BR-7, AC-6); observable AC-2; `Sendable` `LocaleMatch` (Data, AC-9); BR-10 and BR-11 cite `CLAUDE.md`; Commands owner (BR-12) (review-spec round 1)
 - 2026-10-27 Source paths and `.swiftlint.yml` owner, imports checked by lint (Scope, BR-12, AC-10, AC-11, AC-12); single `return true` (BR-11, AC-12); no entries (BR-6, AC-5); Approved (review-spec revalidation)
+- 2026-10-27 Implemented: [plan](../../plans/testing/test-utilities.md), 0f83fdc..f93b778
