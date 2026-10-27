@@ -50,19 +50,23 @@ internal struct MatchEdgeCaseTests {
 
     @Test func `AC-5`() {
         let entries: [LocaleMatch<String>] = [.polish("Przypomnienia"), .english("Reminders")]
-        let line = #line + 1
-        let german = outcome { "x".match(entries, in: Locale(identifier: "de_DE"), sourceLocation: #_sourceLocation) }
+        let germanLine = #line + 1
+        let german = outcome { "x".match(entries, in: Locale(identifier: "de_DE")) }
         #expect(german.returned)
         #expect(german.comments == ["No value for language de (locale de_DE); entries: pl, en"])
-        #expect(german.lines == [line])
+        #expect(german.lines == [germanLine])
 
+        let emptyLine = #line + 1
         let empty = outcome { "x".match(entries, in: Locale(identifier: "")) }
         #expect(empty.returned)
         #expect(empty.comments == ["No value for language — (locale ); entries: pl, en"])
+        #expect(empty.lines == [emptyLine])
 
+        let noneLine = #line + 1
         let none = outcome { "x".match([LocaleMatch<String>](), in: Locale(identifier: "pl_PL")) }
         #expect(none.returned)
         #expect(none.comments == ["No value for language pl (locale pl_PL); entries: —"])
+        #expect(none.lines == [noneLine])
     }
 
     @Test func `AC-6 two polish entries`() {
@@ -117,17 +121,18 @@ internal struct MatchEdgeCaseTests {
 
     @Test func `AC-8 AC-5 no language`() {
         let entries: [LocaleMatch<String>] = [.polish("Przypomnienia"), .english("Reminders")]
+        let location = #_sourceLocation
         for identifier in ["de_DE", ""] {
             let locale = Locale(identifier: identifier)
-            let array = outcome { "x".match(entries, in: locale) }
-            let variadic = outcome { "x".match(.polish("Przypomnienia"), .english("Reminders"), in: locale) }
+            let array = outcome { "x".match(entries, in: locale, sourceLocation: location) }
+            let variadic = outcome { "x".match(.polish("Przypomnienia"), .english("Reminders"), in: locale, sourceLocation: location) }
             #expect(array.comments.count == 1)
-            #expect(variadic.comments == array.comments)
-            #expect(variadic.returned == array.returned)
+            #expect(array.lines == [location.line])
+            #expect(variadic == array)
         }
-        let array = outcome { "x".match([LocaleMatch<String>](), in: Locale(identifier: "pl_PL")) }
-        let variadic = outcome { "x".match(in: Locale(identifier: "pl_PL")) }
-        #expect(variadic.comments == array.comments)
-        #expect(variadic.returned == array.returned)
+        let array = outcome { "x".match([LocaleMatch<String>](), in: Locale(identifier: "pl_PL"), sourceLocation: location) }
+        let variadic = outcome { "x".match(in: Locale(identifier: "pl_PL"), sourceLocation: location) }
+        #expect(array.lines == [location.line])
+        #expect(variadic == array)
     }
 }
