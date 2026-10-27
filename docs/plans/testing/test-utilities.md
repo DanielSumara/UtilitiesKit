@@ -1,8 +1,8 @@
 # Test utilities — implementation plan
 Spec: UtilitiesKit/docs/specs/testing/test-utilities.md
 Repo: UtilitiesKit
-Status: Ready
-Run base: —
+Status: In progress
+Run base: 3667744bd6996d2a17c5777cc5de29bdee6db619
 Depends on: —
 
 Delta plan: TestUtilitiesKit exists from an earlier version (`TestLanguage`, `LocaleMatch`, `Equatable+LocaleMatch`, tests in `TestUtilitiesKitTests`). Slices change it to the current spec; the existing tests are the baseline.
@@ -87,8 +87,8 @@ Delta plan: TestUtilitiesKit exists from an earlier version (`TestLanguage`, `Lo
 | Slice | Status | Base | Head | Review |
 |---|---|---|---|---|
 | S1 | Pending | — | — | — |
-| S2 | Pending | — | — | — |
-| S3 | Pending | — | — | — |
+| S2 | Done | 3667744 | 41413af | 0 fixed / 0 rejected |
+| S3 | Done | 41413af | b41f7f0 | 0 fixed / 0 rejected |
 | S4 | Pending | — | — | — |
 | S5 | Pending | — | — | — |
 
