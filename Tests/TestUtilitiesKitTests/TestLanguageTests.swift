@@ -15,4 +15,16 @@ internal struct TestLanguageTests {
         let expected: [TestLanguage: String] = [.polish: "Przypomnienia", .english: "Reminders"]
         #expect(entry.value == expected[entry.language])
     }
+
+    @Test func `AC-16 default locale`() {
+        let locale = Locale.current
+        let code = locale.language.languageCode?.identifier ?? "—"
+        let region = locale.region?.identifier ?? "—"
+        #expect(
+            "\(code)_\(region)".match(
+                .polish(TestLanguage.polish.locale.identifier),
+                .english(TestLanguage.english.locale.identifier)
+            )
+        )
+    }
 }

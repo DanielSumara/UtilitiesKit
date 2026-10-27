@@ -1,0 +1,40 @@
+{
+  "configurations" : [
+    {
+      "id" : "5B0A3D61-6C1B-4F0E-9A52-0C5E1D7A1001",
+      "name" : "Polish",
+      "options" : {
+        "region" : "PL",
+        "language" : "pl"
+      }
+    },
+    {
+      "id" : "5B0A3D61-6C1B-4F0E-9A52-0C5E1D7A1002",
+      "name" : "English",
+      "options" : {
+        "region" : "GB",
+        "language" : "en"
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "UtilitiesKitTests",
+        "name" : "UtilitiesKitTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "TestUtilitiesKitTests",
+        "name" : "TestUtilitiesKitTests"
+      }
+    }
+  ],
+  "version" : 1
+}
