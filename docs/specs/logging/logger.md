@@ -1,5 +1,5 @@
 # Logger
-Status: Approved · Level: capability · Repo: UtilitiesKit · Feature: logging · Module or target: `Package.swift`, UtilitiesKit, UtilitiesKitTests · Depends on: —
+Status: Planned · Level: capability · Repo: UtilitiesKit · Feature: logging · Module or target: `Package.swift`, UtilitiesKit, UtilitiesKitTests · Depends on: —
 
 ## Goal
 The UtilitiesKit package exists and builds, and holds the logger contract that Cores and kits inject: one call per event, with a severity, an English message written for logs, and a category chosen by the caller. App implements the contract over unified logging; this spec owns the contract, not the implementation.
