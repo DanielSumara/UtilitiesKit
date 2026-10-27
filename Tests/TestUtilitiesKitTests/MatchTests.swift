@@ -12,7 +12,7 @@ internal struct MatchTests {
     @Test(arguments: ["pl", "pl_DE"])
     func `AC-2 polish`(identifier: String) {
         let locale = Locale(identifier: identifier)
-        let entries: [LocaleMatch<String>] = [.polish("Przypomnienia"), .english("Reminders")]
+        let entries: [LanguageMatch<String>] = [.polish("Przypomnienia"), .english("Reminders")]
         #expect("Przypomnienia".match(entries, in: locale))
         let recorded = IssueRecorder.issues { _ = "Reminders".match(entries, in: locale) }
         #expect(recorded.count == 1)
@@ -23,7 +23,7 @@ internal struct MatchTests {
     @Test(arguments: ["en", "en_US"])
     func `AC-2 english`(identifier: String) {
         let locale = Locale(identifier: identifier)
-        let entries: [LocaleMatch<String>] = [.polish("Przypomnienia"), .english("Reminders")]
+        let entries: [LanguageMatch<String>] = [.polish("Przypomnienia"), .english("Reminders")]
         #expect("Reminders".match(entries, in: locale))
         let recorded = IssueRecorder.issues { _ = "Przypomnienia".match(entries, in: locale) }
         #expect(recorded.count == 1)
@@ -32,7 +32,7 @@ internal struct MatchTests {
     }
 
     @Test func `AC-3`() {
-        let entry = LocaleMatch.polish(Title(text: "A", count: 1))
+        let entry = LanguageMatch.polish(Title(text: "A", count: 1))
         let recorded = IssueRecorder.issues {
             let result = Title(text: "A", count: 2).match(entry, in: Locale(identifier: "pl_PL"))
             #expect(result)
@@ -45,7 +45,7 @@ internal struct MatchTests {
     }
 
     @Test func `AC-3 fallback without difference lines`() {
-        let entry = LocaleMatch.polish(NeverEqual(text: "A"))
+        let entry = LanguageMatch.polish(NeverEqual(text: "A"))
         let recorded = IssueRecorder.issues {
             let result = NeverEqual(text: "A").match(entry, in: Locale(identifier: "pl_PL"))
             #expect(result)
@@ -69,7 +69,7 @@ internal struct MatchTests {
     @Test func `AC-13`() {
         let subject: String? = nil
         #expect(subject.match(.polish(nil), .english("Reminders"), in: Locale(identifier: "pl_PL")))
-        let entries: [LocaleMatch<String?>] = [.polish(nil), .english("Reminders")]
+        let entries: [LanguageMatch<String?>] = [.polish(nil), .english("Reminders")]
         let recorded = IssueRecorder.issues { _ = subject.match(entries, in: Locale(identifier: "en_GB")) }
         #expect(recorded.count == 1)
         #expect(recorded.first?.sourceLocation?.line == entries[1].sourceLocation.line)

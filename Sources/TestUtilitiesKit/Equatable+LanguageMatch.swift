@@ -4,7 +4,7 @@ import Testing
 
 public extension Equatable {
     func match(
-        _ entries: LocaleMatch<Self>...,
+        _ entries: LanguageMatch<Self>...,
         in locale: Locale,
         sourceLocation: SourceLocation = #_sourceLocation
     ) -> Bool {
@@ -12,7 +12,7 @@ public extension Equatable {
     }
 
     func match(
-        _ entries: [LocaleMatch<Self>],
+        _ entries: [LanguageMatch<Self>],
         in locale: Locale,
         sourceLocation: SourceLocation = #_sourceLocation
     ) -> Bool {
@@ -29,7 +29,7 @@ public extension Equatable {
         return true
     }
 
-    private func recordDuplicates(in entries: [LocaleMatch<Self>]) {
+    private func recordDuplicates(in entries: [LanguageMatch<Self>]) {
         var seen: Set<String> = []
         for entry in entries where !seen.insert(entry.language.code).inserted {
             Issue.record(
@@ -39,7 +39,7 @@ public extension Equatable {
         }
     }
 
-    private func recordDifference(from entry: LocaleMatch<Self>) {
+    private func recordDifference(from entry: LanguageMatch<Self>) {
         guard entry.value != self else { return }
         let lines = diff(entry.value, self).filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
         let details = lines.isEmpty ? ["Expected: \(entry.value)", "Received: \(self)"] : lines
