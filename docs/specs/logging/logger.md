@@ -1,5 +1,5 @@
 # Logger
-Status: Draft · Level: capability · Repo: UtilitiesKit · Feature: logging · Module or target: `Package.swift`, UtilitiesKit, UtilitiesKitTests · Depends on: —
+Status: Approved · Level: capability · Repo: UtilitiesKit · Feature: logging · Module or target: `Package.swift`, UtilitiesKit, UtilitiesKitTests · Depends on: —
 
 ## Goal
 The UtilitiesKit package exists and builds, and holds the logger contract that Cores and kits inject: one call per event, with a severity, an English message written for logs, and a category chosen by the caller. App implements the contract over unified logging; this spec owns the contract, not the implementation.
@@ -35,21 +35,21 @@ The UtilitiesKit package exists and builds, and holds the logger contract that C
 ## Data
 - `LogLevel` (public enum, `CaseIterable`, `Sendable`): `debug`, `info`, `warning`, `error`, declared from least to most severe (Q-1).
 - `Logger` (public protocol, `Sendable`): `func log(_ message: String, level: LogLevel, category: String)` — synchronous, returns `Void`, never throws (Q-1, Q-2, Q-3).
-- Use: `logger.log("Bootstrap failed: \(error.description)", level: .error, category: "launch")`.
+- Use: `logger.log("Bootstrap failed: \(error)", level: .error, category: "launch")`.
 - Package (`Package.swift`): tools version 6.2; name UtilitiesKit; platforms iOS 26 and macOS 26; Swift 6 language mode; one library product UtilitiesKit over the target UtilitiesKit (`Sources/UtilitiesKit`) and the test target UtilitiesKitTests (`Tests/UtilitiesKitTests`); no package dependencies, resources or localization in this increment (TestUtilitiesKit and Difference arrive with testing/test-utilities).
 
 ## Rules
 - BR-1 `Package.swift` declares the package skeleton in Data: `swift-tools-version: 6.2`, platforms `.iOS(.v26)` and `.macOS(.v26)`, the Swift 6 language mode that the tools version gives by default, one library product over one target, its test target, and no dependencies, resources or `defaultLocalization`.
-- BR-2 UtilitiesKit imports Foundation only and is platform-independent: no SwiftUI, AppKit or UIKit, no `#if os` or `#if canImport`, no domain types, and no user-facing copy, String Catalog or resources (`CLAUDE.md` › Rules).
+- BR-2 UtilitiesKit imports Foundation only and is platform-independent: no SwiftUI, AppKit or UIKit, no `#if os` or `#if canImport`, no domain types, and no user-facing copy, String Catalog or resources (`UtilitiesKit/CLAUDE.md` › Rules, `CLAUDE.md` › Allowed imports).
 - BR-3 `Logger` is a public `Sendable` protocol with the single requirement `log(_ message: String, level: LogLevel, category: String) -> Void`: synchronous and non-throwing, so an implementation may be called from any isolation domain and concurrently.
 - BR-4 `LogLevel` names severity: `debug` development detail, `info` a normal milestone, `warning` an unexpected condition the caller handled, `error` a failed operation. `allCases` is `[debug, info, warning, error]` (Q-1).
 - BR-5 The message is English text written for logs only: not user-facing, never localized and never in a String Catalog, and it holds no user data — no domain values, identifiers, names, amounts, dates, titles or messages given by other modules, and no file paths. A caller passes a fixed English message or the log description an error already provides (Q-2).
 - BR-6 The category names the logging area and is given by the caller at each call: a short lowercase ASCII identifier that stays stable across releases, e.g. `launch`, `recovery`. It is not inferred from the type, target or bundle (Q-3).
 - BR-7 A call never changes the caller's outcome: it cannot throw, it validates neither message nor category, and it reports a logging failure to no one. What an implementation does with the call — subsystem, level and category mapping, privacy — is the App's (shell/launch, Q-4).
 - BR-8 Every public API has Swift Testing tests in UtilitiesKitTests: the order of `LogLevel.allCases` and a spy that implements `Logger` and records each call's message, level and category. The spy lives in the test target only.
-- BR-9 The sources follow the repo rules: one type per file, a file named after its type, explicit public access on public API, and no comments or doc comments (`CLAUDE.md` › Code style); `swiftlint lint --strict --quiet` passes.
+- BR-9 The sources follow the repo rules: one type per file, a file named after its type, and no comments or doc comments (`CLAUDE.md` › Code style); `swiftlint lint --strict --quiet` passes.
 - BR-10 The package builds for iOS 26 and macOS 26 with no warnings and its tests pass (`UtilitiesKit/CLAUDE.md` › Commands).
-- BR-11 Owners are updated in the same change: `UtilitiesKit/README.md`'s status line no longer calls the package empty and names the package skeleton and the logger contract; `docs/specs/README.md` carries the Draft row.
+- BR-11 Owners are updated in the same change: `UtilitiesKit/README.md`'s status line no longer calls the package empty and names the package skeleton and the logger contract; `docs/specs/README.md` carries the logging/logger row in sync with the spec's status.
 
 ## Acceptance criteria
 - AC-1 (code review) Given `Package.swift`, then it declares tools 6.2, the name UtilitiesKit, iOS 26 and macOS 26, Swift 6 language mode, one library product UtilitiesKit over the target UtilitiesKit and the test target UtilitiesKitTests, and no package dependency, resource or localization (BR-1).
@@ -61,11 +61,12 @@ The UtilitiesKit package exists and builds, and holds the logger contract that C
 - AC-7 (code review) Given the target, then it holds no logger call and no log message literal, no String Catalog, resource or localized copy, and no requirement takes a `Locale` or user-facing text (BR-5).
 - AC-8 (code review) Given the category parameter, then it is a plain `String` supplied at each call and nothing derives it from a type, target or bundle (BR-6).
 - AC-9 (code review) Given the contract, then no requirement throws, no call validates its arguments and no API surfaces a logging failure (BR-7).
-- AC-10 `swiftlint lint --strict --quiet` passes; the sources have one type per file, a file named after its type, explicit public access and no comments (BR-9).
-- AC-11 (code review) Given `UtilitiesKit/README.md`, then its status line names the package skeleton and the logger contract; given `docs/specs/README.md`, then the logging/logger row exists (BR-11).
+- AC-10 `swiftlint lint --strict --quiet` passes; the sources have one type per file, a file named after its type and no comments (BR-9).
+- AC-11 (code review) Given `UtilitiesKit/README.md`, then its status line names the package skeleton and the logger contract; given `docs/specs/README.md`, then the logging/logger row carries the spec's status (BR-11).
 
 ## Open questions
 - —
 
 ## Changelog
 - 2026-10-27 Drafted: package skeleton, `Logger` and `LogLevel`, message and category rules (Q-1–Q-4) (create-spec)
+- 2026-10-27 README row follows the spec's status (BR-11, AC-11); `UtilitiesKit/CLAUDE.md` › Rules and `CLAUDE.md` › Code style cited correctly, the undocumented public-access clause dropped (BR-2, BR-9, AC-10); use example interpolates the error (Data); Approved (review-spec round 1, revalidation)
