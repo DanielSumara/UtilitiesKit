@@ -5,7 +5,7 @@ import Testing
 public extension Equatable {
     func match(
         _ entries: LanguageMatch<Self>...,
-        in locale: Locale,
+        in locale: Locale = .current,
         sourceLocation: SourceLocation = #_sourceLocation
     ) -> Bool {
         match(entries, in: locale, sourceLocation: sourceLocation)
@@ -13,7 +13,7 @@ public extension Equatable {
 
     func match(
         _ entries: [LanguageMatch<Self>],
-        in locale: Locale,
+        in locale: Locale = .current,
         sourceLocation: SourceLocation = #_sourceLocation
     ) -> Bool {
         let code = locale.language.languageCode?.identifier
