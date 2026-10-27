@@ -4,34 +4,10 @@ import Testing
 import TestUtilitiesKit
 
 internal struct MatchEdgeCaseTests {
-    private struct Title: Equatable {
-        let text: String
-        let count: Int
-    }
-
-    private struct NeverEqual: Equatable {
-        let text: String
-
-        static func == (lhs: NeverEqual, rhs: NeverEqual) -> Bool {
-            false
-        }
-    }
-
     private struct Outcome: Equatable {
         let returned: Bool
         let comments: [String]
         let lines: [Int?]
-    }
-
-    private func issues(in body: () -> Void) -> [Issue] {
-        let recorded = Mutex<[Issue]>([])
-        withKnownIssue(isIntermittent: true) {
-            body()
-        } matching: { issue in
-            recorded.withLock { $0.append(issue) }
-            return true
-        }
-        return recorded.withLock { $0 }
     }
 
     private func comments(of recorded: [Issue]) -> [String] {
@@ -40,7 +16,7 @@ internal struct MatchEdgeCaseTests {
 
     private func outcome(_ body: () -> Bool) -> Outcome {
         let returned = Mutex(false)
-        let recorded = issues { returned.withLock { $0 = body() } }
+        let recorded = IssueRecorder.issues(isIntermittent: true) { returned.withLock { $0 = body() } }
         return Outcome(
             returned: returned.withLock { $0 },
             comments: comments(of: recorded),
@@ -72,23 +48,23 @@ internal struct MatchEdgeCaseTests {
     @Test func `AC-6 two polish entries`() {
         let first = LocaleMatch.polish("A")
         let second = LocaleMatch.polish("B")
-        let recorded = issues { _ = "A".match([first, second], in: Locale(identifier: "pl_PL")) }
+        let recorded = IssueRecorder.issues(isIntermittent: true) { _ = "A".match([first, second], in: Locale(identifier: "pl_PL")) }
         #expect(comments(of: recorded) == ["Duplicate value for language pl"])
-        #expect(recorded.first?.sourceLocation?.line == second.sourceLocation.line)
+        #expect(recorded.first?.sourceLocation == second.sourceLocation)
     }
 
     @Test func `AC-6 three polish entries`() {
         let entries: [LocaleMatch<String>] = [.polish("A"), .polish("B"), .polish("C")]
-        let recorded = issues { _ = "A".match(entries, in: Locale(identifier: "pl_PL")) }
+        let recorded = IssueRecorder.issues(isIntermittent: true) { _ = "A".match(entries, in: Locale(identifier: "pl_PL")) }
         #expect(comments(of: recorded) == Array(repeating: "Duplicate value for language pl", count: 2))
-        #expect(recorded.map { $0.sourceLocation?.line } == [entries[1].sourceLocation.line, entries[2].sourceLocation.line])
+        #expect(recorded.map(\.sourceLocation) == [entries[1].sourceLocation, entries[2].sourceLocation])
     }
 
     @Test func `AC-6 duplicate english in polish locale`() {
         let entries: [LocaleMatch<String>] = [.english("A"), .polish("P"), .english("B")]
-        let recorded = issues { _ = "P".match(entries, in: Locale(identifier: "pl_PL")) }
+        let recorded = IssueRecorder.issues(isIntermittent: true) { _ = "P".match(entries, in: Locale(identifier: "pl_PL")) }
         #expect(comments(of: recorded) == ["Duplicate value for language en"])
-        #expect(recorded.first?.sourceLocation?.line == entries[2].sourceLocation.line)
+        #expect(recorded.first?.sourceLocation == entries[2].sourceLocation)
     }
 
     @Test func `AC-8 AC-1 equal values`() {
@@ -115,7 +91,9 @@ internal struct MatchEdgeCaseTests {
         let value = NeverEqual(text: "A")
         let array = outcome { value.match([entry], in: Locale(identifier: "pl_PL")) }
         let variadic = outcome { value.match(entry, in: Locale(identifier: "pl_PL")) }
+        #expect(array.returned)
         #expect(array.comments.count == 1)
+        #expect(array.lines == [entry.sourceLocation.line])
         #expect(variadic == array)
     }
 
