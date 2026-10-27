@@ -73,8 +73,8 @@ Depends on: —
 | Slice | Status | Base | Head | Review |
 |---|---|---|---|---|
 | S1 | Done | 0f83fdc | 5248b2e | 0 fixed / 0 rejected |
-| S2 | In progress | 5248b2e | — | — |
-| S3 | Pending | — | — | — |
+| S2 | Done | 5248b2e | 4afd9d3 | 0 fixed / 0 rejected |
+| S3 | In progress | 4afd9d3 | — | — |
 | S4 | Pending | — | — | — |
 
 ## Open questions

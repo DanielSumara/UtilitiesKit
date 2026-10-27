@@ -1,0 +1,133 @@
+import Foundation
+import Synchronization
+import Testing
+import TestUtilitiesKit
+
+internal struct MatchEdgeCaseTests {
+    private struct Title: Equatable {
+        let text: String
+        let count: Int
+    }
+
+    private struct NeverEqual: Equatable {
+        let text: String
+
+        static func == (lhs: NeverEqual, rhs: NeverEqual) -> Bool {
+            false
+        }
+    }
+
+    private struct Outcome: Equatable {
+        let returned: Bool
+        let comments: [String]
+        let lines: [Int?]
+    }
+
+    private func issues(in body: () -> Void) -> [Issue] {
+        let recorded = Mutex<[Issue]>([])
+        withKnownIssue(isIntermittent: true) {
+            body()
+        } matching: { issue in
+            recorded.withLock { $0.append(issue) }
+            return true
+        }
+        return recorded.withLock { $0 }
+    }
+
+    private func comments(of recorded: [Issue]) -> [String] {
+        recorded.map { $0.comments.first?.rawValue ?? "" }
+    }
+
+    private func outcome(_ body: () -> Bool) -> Outcome {
+        let returned = Mutex(false)
+        let recorded = issues { returned.withLock { $0 = body() } }
+        return Outcome(
+            returned: returned.withLock { $0 },
+            comments: comments(of: recorded),
+            lines: recorded.map { $0.sourceLocation?.line }
+        )
+    }
+
+    @Test func `AC-5`() {
+        let entries: [LocaleMatch<String>] = [.polish("Przypomnienia"), .english("Reminders")]
+        let line = #line + 1
+        let german = outcome { "x".match(entries, in: Locale(identifier: "de_DE"), sourceLocation: #_sourceLocation) }
+        #expect(german.returned)
+        #expect(german.comments == ["No value for language de (locale de_DE); entries: pl, en"])
+        #expect(german.lines == [line])
+
+        let empty = outcome { "x".match(entries, in: Locale(identifier: "")) }
+        #expect(empty.returned)
+        #expect(empty.comments == ["No value for language — (locale ); entries: pl, en"])
+
+        let none = outcome { "x".match([LocaleMatch<String>](), in: Locale(identifier: "pl_PL")) }
+        #expect(none.returned)
+        #expect(none.comments == ["No value for language pl (locale pl_PL); entries: —"])
+    }
+
+    @Test func `AC-6 two polish entries`() {
+        let first = LocaleMatch.polish("A")
+        let second = LocaleMatch.polish("B")
+        let recorded = issues { _ = "A".match([first, second], in: Locale(identifier: "pl_PL")) }
+        #expect(comments(of: recorded) == ["Duplicate value for language pl"])
+        #expect(recorded.first?.sourceLocation?.line == second.sourceLocation.line)
+    }
+
+    @Test func `AC-6 three polish entries`() {
+        let entries: [LocaleMatch<String>] = [.polish("A"), .polish("B"), .polish("C")]
+        let recorded = issues { _ = "A".match(entries, in: Locale(identifier: "pl_PL")) }
+        #expect(comments(of: recorded) == Array(repeating: "Duplicate value for language pl", count: 2))
+        #expect(recorded.map { $0.sourceLocation?.line } == [entries[1].sourceLocation.line, entries[2].sourceLocation.line])
+    }
+
+    @Test func `AC-6 duplicate english in polish locale`() {
+        let entries: [LocaleMatch<String>] = [.english("A"), .polish("P"), .english("B")]
+        let recorded = issues { _ = "P".match(entries, in: Locale(identifier: "pl_PL")) }
+        #expect(comments(of: recorded) == ["Duplicate value for language en"])
+        #expect(recorded.first?.sourceLocation?.line == entries[2].sourceLocation.line)
+    }
+
+    @Test func `AC-8 AC-1 equal values`() {
+        let entries: [LocaleMatch<String>] = [.polish("Przypomnienia"), .english("Reminders")]
+        let array = outcome { "Reminders".match(entries, in: Locale(identifier: "en_GB")) }
+        let variadic = outcome { "Reminders".match(.polish("Przypomnienia"), .english("Reminders"), in: Locale(identifier: "en_GB")) }
+        #expect(array == Outcome(returned: true, comments: [], lines: []))
+        #expect(variadic == array)
+    }
+
+    @Test func `AC-8 AC-3 difference`() {
+        let entry = LocaleMatch.polish(Title(text: "A", count: 1))
+        let value = Title(text: "A", count: 2)
+        let array = outcome { value.match([entry], in: Locale(identifier: "pl_PL")) }
+        let variadic = outcome { value.match(entry, in: Locale(identifier: "pl_PL")) }
+        #expect(array.returned)
+        #expect(array.comments.count == 1)
+        #expect(array.lines == [entry.sourceLocation.line])
+        #expect(variadic == array)
+    }
+
+    @Test func `AC-8 AC-3 fallback`() {
+        let entry = LocaleMatch.polish(NeverEqual(text: "A"))
+        let value = NeverEqual(text: "A")
+        let array = outcome { value.match([entry], in: Locale(identifier: "pl_PL")) }
+        let variadic = outcome { value.match(entry, in: Locale(identifier: "pl_PL")) }
+        #expect(array.comments.count == 1)
+        #expect(variadic == array)
+    }
+
+    @Test func `AC-8 AC-5 no language`() {
+        let entries: [LocaleMatch<String>] = [.polish("Przypomnienia"), .english("Reminders")]
+        for identifier in ["de_DE", ""] {
+            let locale = Locale(identifier: identifier)
+            let array = outcome { "x".match(entries, in: locale) }
+            let variadic = outcome { "x".match(.polish("Przypomnienia"), .english("Reminders"), in: locale) }
+            #expect(array.comments.count == 1)
+            #expect(variadic.comments == array.comments)
+            #expect(variadic.returned == array.returned)
+        }
+        let array = outcome { "x".match([LocaleMatch<String>](), in: Locale(identifier: "pl_PL")) }
+        let variadic = outcome { "x".match(in: Locale(identifier: "pl_PL")) }
+        #expect(variadic.comments == array.comments)
+        #expect(variadic.returned == array.returned)
+    }
+}
