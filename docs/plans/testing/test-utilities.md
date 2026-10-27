@@ -1,7 +1,7 @@
 # Test utilities — implementation plan
 Spec: UtilitiesKit/docs/specs/testing/test-utilities.md
 Repo: UtilitiesKit
-Status: In progress
+Status: Done
 Run base: 3667744bd6996d2a17c5777cc5de29bdee6db619
 Depends on: —
 
@@ -86,11 +86,11 @@ Delta plan: TestUtilitiesKit exists from an earlier version (`TestLanguage`, `Lo
 ## Progress
 | Slice | Status | Base | Head | Review |
 |---|---|---|---|---|
-| S1 | Pending | — | — | — |
+| S1 | Done | 3640fac (HomeBudgetApps) | 920f784 (HomeBudgetApps) | 0 fixed / 0 rejected |
 | S2 | Done | 3667744 | 41413af | 0 fixed / 0 rejected |
 | S3 | Done | 41413af | b41f7f0 | 0 fixed / 0 rejected |
-| S4 | Pending | — | — | — |
-| S5 | Pending | — | — | — |
+| S4 | Done | 803874d | 6fbcec1 | 0 fixed / 0 rejected |
+| S5 | Done | 6fbcec1 / 920f784 (HomeBudgetApps) | 7ac631f / e1046b5 (HomeBudgetApps) | 0 fixed / 0 rejected |
 
 ## Open questions
 - S1: the deny syntax has no negation, so the implementer enumerates the other `.swiftpm/` subfolders; a new folder SwiftPM adds later stays readable until listed

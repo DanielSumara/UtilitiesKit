@@ -1,5 +1,5 @@
 # Test utilities
-Status: Planned · Level: capability · Repo: UtilitiesKit · Feature: testing · Module or target: TestUtilitiesKit, TestUtilitiesKitTests · Depends on: logging/logger
+Status: Implemented · Level: capability · Repo: UtilitiesKit · Feature: testing · Module or target: TestUtilitiesKit, TestUtilitiesKitTests · Depends on: logging/logger
 
 ## Goal
 TestUtilitiesKit is a test-only product of the UtilitiesKit package that every unit test target links (Q-1). One test covers Polish and English: a test plan runs it once in a Polish and once in an English configuration, and each expectation picks its expected value by the language of the process locale, with no locale passed by the test (Q-10). A failure points at the line of the expected value and shows only the fields that differ (krzysztofzablocki/Difference).
@@ -87,3 +87,4 @@ TestUtilitiesKitTests check recorded issues with `withKnownIssue { … } matchin
 - 2026-10-27 Reopened: `match` drops `locale`; language from `TestLanguage.current`, set by the `testLanguages` trait; entries for another language are skipped; no test plan configurations (Goal, Scope, Glossary, Data, BR-2, BR-3, BR-5, BR-6, BR-7, AC-1, AC-2, AC-5, AC-6, AC-9, AC-13, AC-14, Q-9); Draft
 - 2026-10-27 Trait and `TestLanguage.current` dropped: `match`'s `locale` defaults to the process locale, set by Polish and English test plan configurations; language-code matching and the missing-language issue back; UtilitiesKit test plan run with `xcodebuild`; `LocaleMatch` renamed `LanguageMatch` (Goal, Scope, Glossary, Data, BR-2, BR-3, BR-5, BR-6, BR-7, BR-12, BR-13, AC-1–AC-3, AC-5, AC-6, AC-9–AC-15, Q-10–Q-12) (review-spec round 3)
 - 2026-10-27 Committed scheme readable and not ignored: `.gitignore` re-includes each level, workspace `.claude/settings.json` deny narrowed (BR-12, BR-13, AC-12, Q-13); default-locale check automated as AC-16, AC-15 keeps the result bundle; Approved (review-spec round 4, revalidation)
+- 2026-10-27 Implemented: [plan](../../plans/testing/test-utilities.md), 3667744..500952e
