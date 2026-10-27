@@ -1,8 +1,8 @@
 # Test utilities — implementation plan
 Spec: UtilitiesKit/docs/specs/testing/test-utilities.md
 Repo: UtilitiesKit
-Status: Ready
-Run base: —
+Status: In progress
+Run base: 0f83fdce052ced87ce7532902617ea1984743536
 Depends on: —
 
 ## Slices
@@ -72,7 +72,7 @@ Depends on: —
 ## Progress
 | Slice | Status | Base | Head | Review |
 |---|---|---|---|---|
-| S1 | Pending | — | — | — |
+| S1 | In progress | 0f83fdc | — | — |
 | S2 | Pending | — | — | — |
 | S3 | Pending | — | — | — |
 | S4 | Pending | — | — | — |

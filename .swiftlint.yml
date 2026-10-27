@@ -41,10 +41,17 @@ custom_rules:
     severity: error
   utilitieskit_imports:
     name: Utilitieskit imports
-    included: 'Sources/.*\.swift'
+    included: 'Sources/UtilitiesKit/.*\.swift'
     regex: '^import\s+(?!Foundation\b|Synchronization\b|Observation\b)\w+'
     match_kinds: [keyword, identifier]
     message: "UtilitiesKit imports Foundation only."
+    severity: error
+  testutilitieskit_imports:
+    name: TestUtilitiesKit imports
+    included: 'Sources/TestUtilitiesKit/.*\.swift'
+    regex: '^import\s+(?!Foundation\b|Testing\b|Difference\b)\w+'
+    match_kinds: [keyword, identifier]
+    message: "TestUtilitiesKit imports Foundation, Testing and Difference only."
     severity: error
   utilitieskit_platform_conditionals:
     name: Utilitieskit platform conditionals
