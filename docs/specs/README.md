@@ -8,4 +8,4 @@ A spec covers one screen or one capability of one feature; behavior spanning two
 | Feature | Spec | Scope | Status |
 |---|---|---|---|
 | logging | [logging/logger](logging/logger.md) | Package skeleton, logger contract: four levels, English message, category from the caller | Implemented |
-| testing | [testing/test-utilities](testing/test-utilities.md) | TestUtilitiesKit product: language-keyed `match` on the test plan's Polish and English configurations, Difference diffs | Draft |
+| testing | [testing/test-utilities](testing/test-utilities.md) | TestUtilitiesKit product: language-keyed `match` on the test plan's Polish and English configurations, Difference diffs | Approved |
