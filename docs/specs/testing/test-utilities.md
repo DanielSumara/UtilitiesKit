@@ -9,7 +9,7 @@ TestUtilitiesKit is a test-only product of the UtilitiesKit package that every u
   - Target and product TestUtilitiesKit in the UtilitiesKit package; its package dependency Difference; test target TestUtilitiesKitTests
   - `TestLanguage`: the test languages, as Swift Testing arguments
   - `LocaleMatch`: an expected value for one language, with its source location
-  - `match` on `Equatable` and `Optional`: the locale-keyed expectation used inside `#expect`
+  - `match` on `Equatable`, optionals included: the locale-keyed expectation used inside `#expect`
 - Out:
   - Linking TestUtilitiesKit to the apps' test targets, the test plan's Polish and English configurations, and the apps' testing rules: HomeBudgetApps shell/test-languages
   - Domain fixtures and doubles (clocks, loggers, money, days): HomeBudgetApps TestKit
@@ -29,49 +29,50 @@ TestUtilitiesKit is a test-only product of the UtilitiesKit package that every u
 ## Data
 - `TestLanguage` (public enum, `CaseIterable`, `Sendable`, `CustomTestStringConvertible`): `polish`, `english`
   - `code`: `String`, the language code: `pl`, `en`
-  - `locale`: `Locale`, the locale a test injects: `pl_PL`, `en_PL` (Q-6)
+  - `locale`: `Locale`, the locale a test injects: `pl_PL`, `en_GB` (Q-6)
   - `testDescription`: its `code`, so test runs read `pl` and `en`
-- `LocaleMatch<Value: Equatable>` (public struct)
+- `LocaleMatch<Value: Equatable>` (public struct, `Sendable` where `Value: Sendable`, so entries can be test arguments)
   - `language`: `TestLanguage`
   - `value`: `Value`
   - `sourceLocation`: `SourceLocation`, where the entry is written
   - `static func polish(_ value: Value, sourceLocation: SourceLocation = #_sourceLocation) -> LocaleMatch<Value>`; `english(_:sourceLocation:)` alike
 - `Equatable.match(_ entries: LocaleMatch<Self>..., in locale: Locale, sourceLocation: SourceLocation = #_sourceLocation) -> Bool`; the same with `[LocaleMatch<Self>]`
-- `Optional.match(_ entries: LocaleMatch<Wrapped>..., in locale: Locale, sourceLocation: SourceLocation = #_sourceLocation) -> Bool`, where `Wrapped: Equatable`
+- An optional subject uses `Equatable.match` with `LocaleMatch<Wrapped?>` entries, so an entry may expect `nil`; there is no separate `Optional.match` (Q-8)
 - Use: `@Test(arguments: TestLanguage.allCases) func title(language: TestLanguage)` builds its subject with `language.locale` and checks `#expect(title.match(.polish("Przypomnienia"), .english("Reminders"), in: language.locale))`
 
 ## Rules
-- BR-1 TestUtilitiesKit imports Foundation, Testing and Difference only, and holds no domain types. Difference is a package dependency pinned to an exact version (Q-7). Only test targets link TestUtilitiesKit; UtilitiesKit's own target never imports it.
+- BR-1 TestUtilitiesKit imports Foundation, Testing and Difference only, and holds no domain types. Difference is a package dependency pinned to exactly 1.1.0 (Q-7). Only test targets link TestUtilitiesKit; UtilitiesKit's own target never imports it.
 - BR-2 The locale is always passed in. TestUtilitiesKit never reads the current locale, the preferred languages or a bundle's localizations, so a test gives the same result in every process language (Q-2).
-- BR-3 An entry matches a locale by the locale's language code. Region, script and variant are ignored: `pl`, `pl_PL` and `pl_DE` match `polish`, and `en`, `en_PL` and `en_GB` match `english` (Q-3).
+- BR-3 An entry matches a locale by the locale's language code. Region, script and variant are ignored: `pl`, `pl_PL` and `pl_DE` match `polish`, and `en`, `en_GB` and `en_US` match `english` (Q-3).
 - BR-4 `match` returns `true` whatever happens. A pass records nothing. Each failure is recorded once with `Issue.record`, so the `#expect` around it never adds a second issue (Q-4). Issue comments are in English.
-- BR-5 When the matched entry's value differs from the received value, one issue is recorded at the entry's source location, with the comment `Found difference for {code}:`, then Difference's lines for expected against received, one per line.
+- BR-5 When the matched entry's value differs from the received value, one issue is recorded at the entry's source location, with the comment `Found difference for {code}:`, then Difference's lines for expected against received, one per line. When Difference gives no lines, the comment's next two lines are `Expected: {expected}` and `Received: {received}` instead.
 - BR-6 When no entry has the locale's language, one issue is recorded at the call site, with the comment `No value for language {language code} (locale {identifier}); entries: {codes in entry order}`. A locale with no language code is reported the same way, with `—` as its code.
-- BR-7 When two entries share a language, one issue is recorded at the later entry, with the comment `Duplicate value for language {code}`. The first entry with that language is matched; nothing crashes.
-- BR-8 `Optional.match` on `nil` records one issue at the call site, with the comment `No value`, and evaluates no entry. On a value it behaves as `Equatable.match` on the wrapped value.
+- BR-7 Each entry whose language appears in an earlier entry records one issue at its own line, with the comment `Duplicate value for language {code}`, whatever the locale under test. The first entry with a language is the one matched; nothing crashes.
+- BR-8 (removed, Q-8)
 - BR-9 `TestLanguage.allCases` is `[polish, english]`, Polish first, as the development language.
-- BR-10 TestUtilitiesKit and TestUtilitiesKitTests build in Swift 6 language mode with strict concurrency for iOS 26 and macOS 26, with no warnings.
-- BR-11 The sources hold no project headers, doc comments or project constants, and carry over no locale from earlier projects. The one explanation that stays is a single line `// Workaround: …` above `return true` after an issue is recorded (Q-5).
-- BR-12 Owners are updated in the same change: `UtilitiesKit/CLAUDE.md` › Rules (a second product TestUtilitiesKit with its test target, its imports, its dependency Difference); the root `CLAUDE.md` › Structure (the UtilitiesKit repo's products) and › Allowed imports (TestUtilitiesKit: Foundation, Testing, Difference; test targets only).
+- BR-10 TestUtilitiesKit and TestUtilitiesKitTests follow the package's language mode and platforms (`CLAUDE.md` › Code style, `UtilitiesKit/CLAUDE.md` › Rules) and build with no warnings.
+- BR-11 Comments follow `CLAUDE.md` › Code style; the one `// Workaround: …` line sits above `return true` after an issue is recorded. The sources hold no project headers or constants and no locales from earlier projects (Q-5).
+- BR-12 Owners are updated in the same change: `UtilitiesKit/CLAUDE.md` › Rules (a second product TestUtilitiesKit with its test target, its imports, its dependency Difference) and › Commands (the iOS build of TestUtilitiesKit); the root `CLAUDE.md` › Structure (the UtilitiesKit repo's products) and › Allowed imports (TestUtilitiesKit: Foundation, Testing, Difference; test targets only).
 
 ## Acceptance criteria
 TestUtilitiesKitTests check recorded issues with `withKnownIssue { … } matching:`, counting the matched issues and checking each one's comment and source location.
-- AC-1 Given a received value equal to the `polish` entry's value, when `match` runs in `pl_PL`, then no issue is recorded and it returns `true`; the same for `english` in `en_PL` (BR-4).
-- AC-2 Given `polish` and `english` entries, when `match` runs in `pl`, `pl_DE`, `en` and `en_GB`, then each matches the entry for its language (BR-3).
-- AC-3 Given two structs that differ in one property, when `match` runs in `pl_PL`, then exactly one issue is recorded, at the `polish` entry's line, its comment starts with `Found difference for pl:` and names that property, and it returns `true` (BR-4, BR-5).
+- AC-1 Given a received value equal to the `polish` entry's value, when `match` runs in `pl_PL`, then no issue is recorded and it returns `true`; the same for `english` in `en_GB` (BR-4).
+- AC-2 Given `polish` and `english` entries, when `match` runs in `pl`, `pl_DE`, `en` and `en_US` with the value of the entry for the locale's language, then no issue is recorded; with the other language's value, one difference issue is recorded at the entry for the locale's language (BR-3, BR-5).
+- AC-3 Given two structs that differ in one property, when `match` runs in `pl_PL`, then exactly one issue is recorded, at the `polish` entry's line, its comment starts with `Found difference for pl:` and names that property, and it returns `true`; given two values with the same fields of a type whose `==` returns `false`, the comment's next lines are `Expected: …` and `Received: …` (BR-4, BR-5).
 - AC-4 Given a failing `match` inside `#expect`, then exactly one issue is recorded in total (BR-4).
-- AC-5 Given only `polish` and `english` entries, when `match` runs in `de_DE`, then one issue is recorded at the call site with `No value for language de (locale de_DE); entries: pl, en`, and it returns `true` (BR-6).
-- AC-6 Given two `polish` entries with different values, when `match` runs in `pl_PL` with the first value, then one issue is recorded at the second entry's line with `Duplicate value for language pl`, there is no difference issue, and nothing crashes (BR-7).
-- AC-7 Given `nil`, when `Optional.match` runs, then one issue `No value` is recorded at the call site and it returns `true`; given a wrapped value, the outcome is the same as AC-1 and AC-3 (BR-8).
+- AC-5 Given only `polish` and `english` entries, when `match` runs in `de_DE`, then one issue is recorded at the call site with `No value for language de (locale de_DE); entries: pl, en`, and it returns `true`; in `Locale(identifier: "")` the comment is `No value for language — (locale ); entries: pl, en` (BR-6).
+- AC-6 Given two `polish` entries with different values, when `match` runs in `pl_PL` with the first value, then one issue is recorded at the second entry's line with `Duplicate value for language pl`, there is no difference issue, and nothing crashes; given three `polish` entries, the second and third each record one; given two `english` entries, when `match` runs in `pl_PL`, the second `english` entry records `Duplicate value for language en` (BR-7).
+- AC-7 (removed, Q-8)
 - AC-8 Given the same entries as an array and as a variadic list, then both overloads give the same outcome for AC-1, AC-3 and AC-5 (Data).
-- AC-9 `TestLanguage.allCases` is `[polish, english]`, with codes `pl` and `en`, locales `pl_PL` and `en_PL`, and test descriptions `pl` and `en`; a test with `arguments: TestLanguage.allCases` runs twice (Data, BR-9).
-- AC-10 (review) TestUtilitiesKit imports only Foundation, Testing and Difference; it never uses `Locale.current`, `Locale.autoupdatingCurrent`, `Locale.preferredLanguages`, `Bundle.preferredLocalizations` or `Bundle.main`; only test targets depend on it; Difference is pinned to an exact version (BR-1, BR-2).
+- AC-9 `TestLanguage.allCases` is `[polish, english]`, with codes `pl` and `en`, locales `pl_PL` and `en_GB`, and test descriptions `pl` and `en`; `LocaleMatch<String>` values can be passed as `@Test(arguments:)` (Data, BR-9).
+- AC-10 (review) TestUtilitiesKit imports only Foundation, Testing and Difference; it never uses `Locale.current`, `Locale.autoupdatingCurrent`, `Locale.preferredLanguages`, `Bundle.preferredLocalizations` or `Bundle.main`; only test targets depend on it; Difference is pinned to exactly 1.1.0 (BR-1, BR-2).
 - AC-11 The package tests command and the iOS build command for TestUtilitiesKit succeed with no warnings (BR-10).
-- AC-12 (review) The sources hold no headers, doc comments or project constants, apart from one `// Workaround:` line per `return true` after an issue; `UtilitiesKit/CLAUDE.md` and the root `CLAUDE.md` name TestUtilitiesKit as BR-12 says (BR-11, BR-12).
+- AC-12 (review) The sources follow `CLAUDE.md` › Code style with one `// Workaround:` line per `return true` after an issue, and hold no project headers, constants or earlier locales; `UtilitiesKit/CLAUDE.md` and the root `CLAUDE.md` name TestUtilitiesKit as BR-12 says (BR-11, BR-12).
+- AC-13 Given an optional subject with entries `.polish(nil)` and `.english("Reminders")`, when `match` runs with `nil` in `pl_PL`, then no issue is recorded; with `nil` in `en_GB`, one difference issue is recorded at the `english` entry's line (Data, BR-5).
 
 ## Open questions
-- Q-6 Which locale does `TestLanguage.english` inject: `en_PL` (an English-language user in Poland, the app locale shell/app-project BR-10 builds for the Polish market) or `en` (what existing tests pass)? Proposed: `en_PL`, so formatted amounts and dates use the Polish region in both languages.
-- Q-7 Does the Difference release chosen build under Swift 6 strict concurrency with no warnings (BR-10)? If not: pin a fork or commit that does, or replace Difference with a `Mirror`-based diff in TestUtilitiesKit.
+- —
 
 ## Changelog
 - 2026-10-27 Drafted from the user's LocaleMatch files and Difference; placement, test languages, match key, `true` with one issue, comments (Q-1–Q-5) (create-spec)
+- 2026-10-27 English locale `en_GB` (Data, BR-3, AC-1, AC-2, AC-9, Q-6); Difference pinned to 1.1.0 (BR-1, AC-10, Q-7); `Optional.match` dropped, optionals through `Equatable.match` (Scope, Data, BR-8, AC-7, AC-13, Q-8); fallback when Difference gives no lines (BR-5, AC-3); locale without a language code (AC-5); duplicates per entry in every locale (BR-7, AC-6); observable AC-2; `Sendable` `LocaleMatch` (Data, AC-9); BR-10 and BR-11 cite `CLAUDE.md`; Commands owner (BR-12) (review-spec round 1)
