@@ -43,6 +43,12 @@ internal struct MatchEdgeCaseTests {
         #expect(none.returned)
         #expect(none.comments == ["No value for language pl (locale pl_PL); entries: —"])
         #expect(none.lines == [noneLine])
+
+        let polishOnlyLine = #line + 1
+        let polishOnly = outcome { "x".match(.polish("Przypomnienia"), in: Locale(identifier: "en_GB")) }
+        #expect(polishOnly.returned)
+        #expect(polishOnly.comments == ["No value for language en (locale en_GB); entries: pl"])
+        #expect(polishOnly.lines == [polishOnlyLine])
     }
 
     @Test func `AC-6 two polish entries`() {

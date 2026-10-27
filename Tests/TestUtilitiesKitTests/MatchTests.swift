@@ -72,6 +72,7 @@ internal struct MatchTests {
         let entries: [LanguageMatch<String?>] = [.polish(nil), .english("Reminders")]
         let recorded = IssueRecorder.issues { _ = subject.match(entries, in: Locale(identifier: "en_GB")) }
         #expect(recorded.count == 1)
+        #expect(recorded.first?.comments.first?.rawValue.hasPrefix("Found difference for en:") == true)
         #expect(recorded.first?.sourceLocation?.line == entries[1].sourceLocation.line)
     }
 }
