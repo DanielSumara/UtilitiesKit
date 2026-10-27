@@ -1,5 +1,5 @@
 # Logger
-Status: Planned · Level: capability · Repo: UtilitiesKit · Feature: logging · Module or target: `Package.swift`, UtilitiesKit, UtilitiesKitTests · Depends on: —
+Status: Implemented · Level: capability · Repo: UtilitiesKit · Feature: logging · Module or target: `Package.swift`, UtilitiesKit, UtilitiesKitTests · Depends on: —
 
 ## Goal
 The UtilitiesKit package exists and builds, and holds the logger contract that Cores and kits inject: one call per event, with a severity, an English message written for logs, and a category chosen by the caller. App implements the contract over unified logging; this spec owns the contract, not the implementation.
@@ -70,3 +70,4 @@ The UtilitiesKit package exists and builds, and holds the logger contract that C
 ## Changelog
 - 2026-10-27 Drafted: package skeleton, `Logger` and `LogLevel`, message and category rules (Q-1–Q-4) (create-spec)
 - 2026-10-27 README row follows the spec's status (BR-11, AC-11); `UtilitiesKit/CLAUDE.md` › Rules and `CLAUDE.md` › Code style cited correctly, the undocumented public-access clause dropped (BR-2, BR-9, AC-10); use example interpolates the error (Data); Approved (review-spec round 1, revalidation)
+- 2026-10-27 Implemented: [plan](../../plans/logging/logger.md), 9edf828..b58d89f

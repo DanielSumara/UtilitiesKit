@@ -1,7 +1,7 @@
 # Logger — implementation plan
 Spec: UtilitiesKit/docs/specs/logging/logger.md
 Repo: UtilitiesKit
-Status: In progress
+Status: Done
 Run base: 9edf8285708392f143bb5c50877e56d04bba25d6
 Baseline: empty
 Depends on: —
