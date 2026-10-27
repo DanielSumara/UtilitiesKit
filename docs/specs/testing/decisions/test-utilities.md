@@ -1,0 +1,7 @@
+# Decisions: testing/test-utilities
+
+- Q-1 Where does the shared test kit live? → A second product, TestUtilitiesKit, in the public UtilitiesKit package, so UtilitiesKit's tests and every HomeBudgetApps test target use it. HomeBudgetApps TestKit keeps the domain fixtures. Shapes: Goal, Scope, BR-1. (create-spec, 2026-10-27)
+- Q-2 How do tests cover Polish and English: test plan configurations reading the current locale, or test arguments? → Arguments: a language-dependent test runs over `TestLanguage.allCases` and injects the language's locale; expectations take that locale. The HomeBudgetApps test plan also runs in Polish and English (HomeBudgetApps shell/test-languages), so a test that reads the current locale fails in one of them. Shapes: Data, BR-2, BR-9. (create-spec, 2026-10-27)
+- Q-3 What does an entry match on? → The locale's language code; region and script are ignored. The app replaces only the language (HomeBudgetApps shell/app-project BR-10). Shapes: BR-3. (create-spec, 2026-10-27)
+- Q-4 Should `match` return its outcome? → No: it always returns `true` and records each failure with `Issue.record` at the expected value's line; returning `false` would make `#expect` record the same failure a second time. Shapes: BR-4, BR-8. (create-spec, 2026-10-27)
+- Q-5 What stays of the original files' comments and constants? → No project headers, doc comments or constants; `.albania` and `.unitedKingdom` become `.polish` and `.english`. The comment explaining `return true` stays, as one `// Workaround:` line. Shapes: BR-11. (create-spec, 2026-10-27)

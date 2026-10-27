@@ -58,3 +58,10 @@ custom_rules:
     regex: '(Date\(\)|Locale\.current|Calendar\.current|TimeZone\.current)'
     message: "Inject clock, locale, calendar and time zone."
     severity: error
+  no_singletons:
+    name: No singletons
+    regex: '\b(?:FileManager\.default|UserDefaults\.standard|NotificationCenter\.default|DistributedNotificationCenter\.default|Bundle\.main|ProcessInfo\.processInfo|URLSession\.shared|NSApplication\.shared|NSWorkspace\.shared|NSScreen\.main|UIApplication\.shared|UIScreen\.main|UIDevice\.current|NSPasteboard\.general|UIPasteboard\.general|(?:Locale|Calendar|TimeZone)\.(?:current|autoupdatingCurrent))\b(?=\s*[?!]?\.)'
+    excluded: '^$' # allowed files: extend as '^$|path/File\.swift|path/Other\.swift'; empty on purpose
+    match_kinds: [identifier, typeidentifier]
+    message: "Do not use a singleton in a method; inject the instance (private let assigned in init). Passing the singleton as an init argument is fine."
+    severity: error
