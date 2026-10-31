@@ -92,4 +92,79 @@ internal struct ValidatorTests {
         validator.force()
         #expect(validator.result == .invalid(reason: "Błąd"))
     }
+
+    @Test func `AC-7a focus entering and leaving without an input is undetermined`() {
+        var validator = Validator(rule: threeToTen, input: "")
+        validator.hasFocus = true
+        validator.hasFocus = false
+        #expect(validator.result == .undetermined)
+    }
+
+    @Test func `AC-7b leaving a field after an input forces validation`() {
+        var validator = Validator(rule: threeToTen, input: "")
+        validator.hasFocus = true
+        validator.input = "1"
+        validator.hasFocus = false
+        #expect(validator.result == .invalid(reason: "Błąd"))
+    }
+
+    @Test func `AC-7c an input undone before leaving still forces validation`() {
+        var validator = Validator(rule: threeToTen, input: "")
+        validator.hasFocus = true
+        validator.input = "1"
+        validator.input = ""
+        validator.hasFocus = false
+        #expect(validator.result == .invalid(reason: "Błąd"))
+    }
+
+    @Test func `AC-7d an input without focus and a new rule do not count`() {
+        var unfocused = Validator(rule: threeToTen, input: "")
+        unfocused.input = "1"
+        unfocused.hasFocus = true
+        unfocused.hasFocus = false
+        #expect(unfocused.result == .undetermined)
+
+        var reruled = Validator(rule: threeToTen, input: "")
+        reruled.hasFocus = true
+        reruled.rule = .length(4...10, message: "Błąd")
+        reruled.hasFocus = false
+        #expect(reruled.result == .undetermined)
+    }
+
+    @Test func `AC-7e leaving without an input keeps the result and a valid input becomes valid`() {
+        var validator = Validator(rule: threeToTen, input: "")
+        validator.hasFocus = true
+        validator.input = "12"
+        validator.hasFocus = false
+        #expect(validator.result == .invalid(reason: "Błąd"))
+
+        validator.hasFocus = true
+        validator.hasFocus = false
+        #expect(validator.result == .invalid(reason: "Błąd"))
+
+        validator.hasFocus = true
+        validator.input = "123"
+        validator.hasFocus = false
+        #expect(validator.result == .valid)
+    }
+
+    @Test func `AC-7f an input equal to the last one forces validation on leaving`() {
+        var validator = Validator(rule: threeToTen, input: "")
+        validator.hasFocus = true
+        validator.input = ""
+        validator.hasFocus = false
+        #expect(validator.result == .invalid(reason: "Błąd"))
+    }
+
+    @Test func `AC-7g a forced invalid field stays invalid while focused until its input is valid`() {
+        var validator = Validator(rule: threeToTen, input: "")
+        validator.hasFocus = true
+        validator.input = "12"
+        validator.force()
+        validator.input = "1"
+        #expect(validator.result == .invalid(reason: "Błąd"))
+
+        validator.input = "123"
+        #expect(validator.result == .valid)
+    }
 }

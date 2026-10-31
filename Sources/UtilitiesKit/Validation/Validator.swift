@@ -3,6 +3,7 @@ public struct Validator<Input> {
 
     public var input: Input {
         didSet {
+            tookInputSinceFocus = tookInputSinceFocus || hasFocus
             decide()
         }
     }
@@ -12,6 +13,20 @@ public struct Validator<Input> {
             decide()
         }
     }
+
+    public var hasFocus = false {
+        didSet {
+            guard hasFocus != oldValue else { return }
+            if hasFocus {
+                tookInputSinceFocus = false
+            } else if tookInputSinceFocus {
+                tookInputSinceFocus = false
+                force()
+            }
+        }
+    }
+
+    private var tookInputSinceFocus = false
 
     public init(rule: ValidationRule<Input>, input: Input) {
         self.rule = rule
