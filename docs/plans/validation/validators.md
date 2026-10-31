@@ -58,7 +58,7 @@ Depends on: —
 
 ### S6 — Owners and verification
 - ACs: AC-9, AC-10, AC-11, AC-13
-- Area: UtilitiesKit/README.md, UtilitiesKit/CLAUDE.md, UtilitiesKit/docs/specs/README.md, UtilitiesKit/docs/specs/validation/validation.md
+- Area: UtilitiesKit/README.md, UtilitiesKit/CLAUDE.md, UtilitiesKit/docs/specs/README.md, UtilitiesKit/docs/specs/validation/validation.md; review scope also UtilitiesKit/Sources/UtilitiesKit/Validation (AC-9, AC-11)
 - Depends on: S1, S2, S3, S4, S5
 - Skills: —
 - Review: diff-only
