@@ -10,3 +10,4 @@ A spec covers one screen or one capability of one feature; behavior spanning two
 | logging | [logging/logger](logging/logger.md) | Package skeleton, logger contract: four levels, English message, category from the caller | Implemented |
 | testing | [testing/test-utilities](testing/test-utilities.md) | TestUtilitiesKit product: language-keyed `match` on the test plan's Polish and English configurations, Difference diffs | Implemented |
 | formatting | formatting/month-title | Month and year as a title in a locale | Not started |
+| validation | validation/validators | Domain-agnostic validation rules and results for form values: required text, length limits | Not started |
