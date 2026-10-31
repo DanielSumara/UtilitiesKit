@@ -2,7 +2,7 @@
 
 Domain-agnostic Swift utilities for iOS, iPadOS and macOS apps: locale-aware formatters and parsers, composable validators, and small contracts (logging, wall clock) that apps implement and inject.
 
-> Status: package skeleton and the logger contract (`LogLevel`, `Logger`); further utilities arrive with the specs that need them (`docs/specs/`).
+> Status: package skeleton, the logger contract (`LogLevel`, `Logger`) and the validators (`ValidationResult`, `ValidationRule`, `Validator`); further utilities arrive with the specs that need them (`docs/specs/`).
 
 - Foundation only, Swift 6, strict concurrency; iOS 26 and macOS 26
 - Fully unit-tested public API (Swift Testing)
