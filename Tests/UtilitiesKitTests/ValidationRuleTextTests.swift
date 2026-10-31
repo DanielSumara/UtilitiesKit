@@ -12,15 +12,14 @@ internal struct ValidationRuleTextTests {
     }
 
     @Test func `AC-3b required and at most 3 characters each fail with their own message`() {
-        let required = ValidationRule<String>.required(message: "A")
-        let atMost = ValidationRule<String>.length(atMost: 3, message: "B")
+        let rule = ValidationRule<String>.allOf([
+            .required(message: "A"),
+            .length(atMost: 3, message: "B")
+        ])
 
-        #expect(required.reason(for: "") == "A")
-        #expect(atMost.reason(for: "") == nil)
-        #expect(required.reason(for: "abcd") == nil)
-        #expect(atMost.reason(for: "abcd") == "B")
-        #expect(required.reason(for: "abc") == nil)
-        #expect(atMost.reason(for: "abc") == nil)
+        #expect(rule.reason(for: "") == "A")
+        #expect(rule.reason(for: "abcd") == "B")
+        #expect(rule.reason(for: "abc") == nil)
     }
 
     @Test func `AC-4a range of 1 to 80 characters`() {
