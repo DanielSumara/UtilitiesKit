@@ -1,8 +1,8 @@
 # Validators — implementation plan
 Spec: UtilitiesKit/docs/specs/validation/validators.md
 Repo: UtilitiesKit
-Status: Ready
-Run base: —
+Status: Done
+Run base: c6e500a05c684032547c8f94718f55ca132ff981
 Depends on: —
 
 ## Slices
@@ -97,12 +97,12 @@ Depends on: —
 ## Progress
 | Slice | Status | Base | Head | Review |
 |---|---|---|---|---|
-| S1 | Pending | — | — | — |
-| S2 | Pending | — | — | — |
-| S3 | Pending | — | — | — |
-| S4 | Pending | — | — | — |
-| S5 | Pending | — | — | — |
-| S6 | Pending | — | — | — |
+| S1 | Done | c6e500a | dd5f75d | 0 fixed / 0 rejected |
+| S2 | Done | dd5f75d | c03124f | 0 fixed / 0 rejected |
+| S3 | Done | c03124f | 859d4db | 0 fixed / 0 rejected |
+| S4 | Done | 859d4db | 3b234e9 | 0 fixed / 0 rejected |
+| S5 | Done | 3b234e9 | 86321da | 0 fixed / 0 rejected |
+| S6 | Done | 86321da | 9ab05a9 | 0 fixed / 0 rejected |
 
 ## Open questions
 - None

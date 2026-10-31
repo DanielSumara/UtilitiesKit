@@ -11,4 +11,4 @@ A spec covers one screen or one capability of one feature; behavior spanning two
 | testing | [testing/test-utilities](testing/test-utilities.md) | TestUtilitiesKit product: language-keyed `match` on the test plan's Polish and English configurations, Difference diffs | Implemented |
 | formatting | formatting/month-title | Month and year as a title in a locale | Not started |
 | validation | [validation/validation](validation/validation.md) | Validation feature map: rules, validation result and focus-aware validator | — |
-| validation | [validation/validators](validation/validators.md) | Validation result, focus-aware validator, text rules (required, length) and composition; locale only when a rule is built | Planned |
+| validation | [validation/validators](validation/validators.md) | Validation result, focus-aware validator, text rules (required, length) and composition; locale only when a rule is built | Implemented |

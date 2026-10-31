@@ -1,5 +1,5 @@
 # Validators
-Status: Planned · Level: capability · Repo: UtilitiesKit · Feature: validation · Module or target: UtilitiesKit, UtilitiesKitTests · Depends on: —
+Status: Implemented · Level: capability · Repo: UtilitiesKit · Feature: validation · Module or target: UtilitiesKit, UtilitiesKitTests · Depends on: —
 
 ## Goal
 Give every form one way to validate what the user enters. A rule says what a valid input is and fails with the message the form gives it; a validation result is undetermined, valid, or invalid with that one message; a validator decides when a field's error shows: a correct input is valid at once, an error only after forced validation, never as the user types. Foundation only, no DesignKit, no copy; no validation call takes a `Locale`, and a rule that needs one takes it once when built (BR-9).
@@ -143,3 +143,4 @@ API and build
 - 2026-10-31 Drafted from FinanceTracker's validator implementation: result, rule, focus-aware validator, required and length rules, composition; no `Locale` parameter (Q-1, Q-2) (create-spec)
 - 2026-10-31 Review round 1: a rule that needs a locale takes it when built, defaulting to `.autoupdatingCurrent`, and `String(localized:)` makes copy (Goal, US-4, Data, BR-9, BR-15, AC-8, AC-9, AC-13, Q-1); form-side forcing cited (BR-6); untestable force clause dropped (BR-12); initial focus, package wording and `(code review)` markers (Data, BR-14, AC-8, AC-9, AC-11, AC-13); validation feature index added
 - 2026-10-31 Revalidation round 2 (same session at the user's request): exact rule factory signatures in Data (AC-8); the result's semantics in BR-1 (AC-1); the locale clause scoped to rules a later spec adds, and AC-9 to this increment's sources (Data, BR-9, AC-9); the feature index added to the owners (Scope, BR-15, AC-13); form-side forcing cited without claiming the placeholder's text (BR-6, Screens); the `UtilitiesKit` iOS scheme named (AC-10); Approved
+- 2026-10-31 Implemented: [plan](../../plans/validation/validators.md), c6e500a..9ab05a9
