@@ -1,10 +1,145 @@
 # Validators
-Status: Not started · Level: capability · Repo: UtilitiesKit · Feature: validation · Depends on: —
-
-Placeholder: `/create-spec validation/validators` drafts it in place.
+Status: Draft · Level: capability · Repo: UtilitiesKit · Feature: validation · Module or target: UtilitiesKit, UtilitiesKitTests · Depends on: —
 
 ## Goal
-Domain-agnostic validation rules and their results for values a form edits (first: required text, length limits), Foundation only, knowing nothing of DesignKit.
+Give every form one way to validate what the user enters. A rule says what a valid input is and fails with the message the form gives it; a validation result is undetermined, valid, or invalid with that one message; a validator decides when a field's error shows: a correct input is valid at once, an error only after forced validation, never as the user types. Foundation only, no DesignKit, no copy and no `Locale` parameter.
 
-## Needed by
-- HomeBudgetApps forms/validated-fields: rules and results it binds to `DK.FormField`
+## Scope
+- In:
+  - `ValidationResult`: undetermined, valid, invalid with a reason
+  - `ValidationRule<Input>`: a check giving the form's message when the input fails, plus `allOf` and `ifPresent`
+  - Text rules: `required`, `length(_ range:)` and `length(atMost:)`
+  - `Validator<Input>`: the field's rule and current input, forced validation, and keyboard focus
+  - Swift Testing tests for the public API in UtilitiesKitTests and SwiftLint for the new sources
+  - Owners: `UtilitiesKit/README.md`, `UtilitiesKit/CLAUDE.md` › Rules and `docs/specs/README.md`
+- Out:
+  - Binding a rule and a validator to a `DK.FormField`, field lists, the primary action forcing visible fields, focus in forms and hidden fields: HomeBudgetApps forms/validated-fields
+  - Rules beyond text: comparisons, `parsed`, decimal places, amount, rate and account number — each arrives with the first spec that needs it (Q-2)
+  - The reminder form's name rules and its messages: HomeBudgetApps reminders/configure-reminders/reminder-form
+  - Checks against stored data, e.g. a unique name: Models through DataKit and the feature spec that needs it
+  - User-facing copy, a String Catalog or resources in UtilitiesKit: every rule takes the form's message (BR-9)
+  - A release tag and `CHANGELOG.md`
+
+## Glossary
+| PL | EN | Meaning |
+|---|---|---|
+| Walidator | Validator | Decides one field's validation result from its input and rule, and forces its validation when keyboard focus leaves the field after it took an input |
+| Reguła | Rule | What a valid input is, e.g. required text or 1–80 characters, with the message the form gives for an input that fails it; rules combine into one |
+| Wynik walidacji | Validation result | Undetermined, valid, or invalid with a reason |
+| Wymuszona walidacja | Forced validation | Request to decide a field's input now and show its error: when keyboard focus leaves the field after it took an input, or when the form's primary action is chosen |
+| Powód | Reason | Why an input is invalid: the message of the rule it failed, which the form shows as the field's error |
+
+## User stories
+- US-1 As a user I want an error to show only once I'm done with my input, when I leave the field or choose Add or Save, and to go as soon as I correct it, so that a form doesn't flash errors at me while I type.
+- US-2 As a Core developer I want one validation mechanism in UtilitiesKit so that every form validates and shows errors the same way.
+- US-3 As a user I want each error to say what to fix in that field, e.g. that a name is required, so that I can correct it without guessing.
+- US-4 As a UtilitiesKit client I want to validate without passing a locale so that callers don't thread one through every rule and any later locale-dependent rule follows the system.
+
+## Data
+- `ValidationResult` (public enum, `Equatable`, `Sendable`): `undetermined`, `valid`, `invalid(reason: String)`
+  - `isValid`: `Bool` — `true` only for `valid`
+  - `reason`: `String?` — the reason for `invalid`, `nil` otherwise
+- `ValidationRule<Input>` (public struct, `Sendable`): what a valid input of one type is; holds no state
+  - `init(_ check: @escaping @Sendable (Input) -> String?)` — a feature may define its own rule
+  - `reason(for input: Input) -> String?` — the form's message when the input fails, `nil` when it passes
+- UtilitiesKit offers these rules:
+
+  | Rule | Input | Fails when |
+  |---|---|---|
+  | `required(message:)` | text | the text is empty (BR-10) |
+  | `length(_ range: ClosedRange<Int>, message:)` | text | its length is outside the range (BR-11) |
+  | `length(atMost maximum: Int, message:)` | text | it is longer than `maximum` (BR-11) |
+  | `allOf(_ rules: [ValidationRule<Input>])` | any | any of its rules fails, in order (BR-8) |
+  | `ifPresent(_ rule: ValidationRule<Wrapped>)` | optional value | the value is present and its rule fails (BR-8) |
+
+- `Validator<Input>` (public struct, `Sendable` where `Input: Sendable`): one per field
+  - `result: ValidationResult` — read-only; the field's current result
+  - `input: Input` — settable; each change is decided as BR-2 to BR-4 say, and counts as an input while the field has focus (BR-6)
+  - `rule: ValidationRule<Input>` — settable; each change is decided as BR-2 to BR-4 say
+  - `hasFocus: Bool` — settable; leaving focus after an input forces validation (BR-6)
+  - `init(rule: ValidationRule<Input>, input: Input)`
+  - `mutating func force()` — decides the current input now (BR-4)
+- Use: a form builds its rule from its own copy, e.g. `Validator(rule: .allOf([.required(message: requiredMessage), .length(atMost: 80, message: tooLongMessage)]), input: name)`, and passes the validator the field's input and focus changes.
+
+## Rules
+- BR-1 Deciding a field's input against its rule gives valid when the input passes, otherwise invalid with the rule's reason; BR-2 to BR-7 say when a validator decides.
+- BR-2 A valid input is valid at once, so a shown error disappears as soon as the input is correct.
+- BR-3 An invalid input is undetermined, showing no error, until the field's validation is forced, so nothing flashes while the user types ("1" on the way to "123"), also when they edit a valid value.
+- BR-4 Forcing a field's validation decides its current input: valid, or invalid with its reason. An invalid field stays invalid while its input is invalid, its reason following the input (e.g. another rule fails instead); once its input is valid, a later invalid input is undetermined again until the next force.
+- BR-5 A validator starts from the field's input when the form opens, absent when the field has no value: valid, or undetermined; so forcing an untouched field, e.g. an empty name, shows its error.
+- BR-6 Validation is forced:
+  - by the validator, when keyboard focus leaves its field after it took an input since focus last entered the field: any input counts, also one undone before leaving ("a" typed, then deleted) and one equal to the last. Inputs taken while the field doesn't have focus, and new rules (BR-7), don't count.
+  - by the form, when the user chooses its primary action (e.g. Add, Save): it calls `force()` for every visible field's validator (forms/validated-fields).
+- BR-7 A field whose rule depends on other values gets its updated rule whenever they change and is decided again as BR-2 to BR-4 say: valid at once; invalid with the new reason when it was invalid; otherwise undetermined. So its error shows at once only when it already shows one.
+- BR-8 An invalid input has one reason:
+  - a rule that fails gives its message
+  - `allOf` fails with the reason of the first of its rules, in their order, that fails
+  - `ifPresent` passes an absent value without checking its rule, and fails a present one with its rule's reason
+- BR-9 A form gives each rule its message, display-ready in the app locale from the form's own copy; UtilitiesKit has no messages, String Catalog or resources of its own. No validator or rule takes a `Locale`: rules are locale-neutral. A later rule that needs a locale reads the OS locale (`Locale.autoupdatingCurrent`) internally, or omits locale handling, never a parameter (Q-1).
+- BR-10 Rules check the input as given: a form that trims (e.g. a name) validates the trimmed text, and `" "` has one character. `required` fails only empty text, so whether whitespace-only text is valid is the form's trimming decision.
+- BR-11 Length counts characters as the user sees them: `"👍🏽"`, `"ł"`, `"é"` and `"e"` followed by U+0301 (combining acute accent) are one character each, so a form's character count agrees with the rule.
+- BR-12 Focus that enters and leaves a field without an input since it entered forces nothing and keeps the current result. An input taken while the field doesn't have focus doesn't count as an input for a later focus leaving. A forced validation while focused changes only the result.
+- BR-13 The sources import Foundation only, live under `Sources/UtilitiesKit/Validation`, and follow the repo rules: one type per file, a file named after its type or the type it extends, public access on the product's API, and no comments.
+- BR-14 No package dependency, product, resource or localization is added; `Package.swift` keeps the existing UtilitiesKit and UtilitiesKitTests targets.
+- BR-15 Owners are updated in the same change: `UtilitiesKit/README.md`'s status line names the validators; `UtilitiesKit/CLAUDE.md` › Rules says formatters and parsers take an injected locale while validators are locale-neutral (Q-1); `docs/specs/README.md` carries the validation/validators row in sync with the spec's status.
+
+## Screens
+- HomeBudgetApps forms/validated-fields: binds a rule and its validator to a `DK.FormField`, and forces visible fields on the primary action.
+- HomeBudgetApps reminders/configure-reminders/reminder-form: validates the reminder's name with a `required` rule and a maximum length.
+
+## Acceptance criteria
+Rules fail with the message "Błąd" unless a check gives another in parentheses, e.g. `required` ("A"). A validator check's rule is 3 to 10 characters unless it gives another, and its inputs and focus changes follow each other in the order given. Tests cite an AC with lettered checks per check (e.g. AC-2a). Tests pass in both language configurations of the UtilitiesKit test plan and pass no locale.
+
+Validation result
+- AC-1 Given a valid result, then it is valid with no reason; given an undetermined one, then it isn't valid and has no reason; given an invalid one with the reason "A", then it isn't valid and its reason is "A" (Data).
+
+Validator timing
+- AC-2 (BR-2 to BR-5, BR-7):
+  - a) Given it starts from "", then it is undetermined; when the input becomes "1" and then "12", it stays undetermined; when it becomes "123", it is valid. Given it starts from "", when its validation is forced, then it is invalid with "Błąd".
+  - b) Given it is valid with "123", when the input becomes "12", then it is undetermined.
+  - c) Given "12", when its validation is forced, then it is invalid with "Błąd"; when the input becomes "1", it stays invalid; when it becomes "123", it is valid; when it becomes "12" again, it is undetermined.
+  - d) Given it starts from "123", then it is valid; when its validation is forced, it stays valid; when the input becomes "12", it is undetermined.
+  - e) Given a rule of `allOf` 3 to 10 characters ("A") and at most 5 ("B") and the input "12", when its validation is forced, then it is invalid with "A"; when the input becomes "123456", it is invalid with "B".
+  - f) Given "12" invalid after a force, when the rule becomes 2 to 10 characters, then it is valid; when it becomes 3 to 10 again, it is undetermined. Given "12" valid with 2 to 10 characters, when the rule becomes 3 to 10, then it is undetermined. Given "1" invalid after a force with 3 to 10 characters ("A"), when the rule becomes 4 to 10 ("B"), then it is invalid with "B".
+  - g) Given `ifPresent` of 3 to 10 characters, starting absent, then it is valid; when the input becomes "12", it is undetermined; when its validation is forced, it is invalid with "Błąd".
+
+Text rules
+- AC-3 `required` (BR-10):
+  - a) Given `required` ("A"), then "" fails with "A", and " ", "a" and "abc" pass.
+  - b) Given `allOf` of `required` ("A") and at most 3 characters ("B"), then "" fails with "A", "abcd" fails with "B", and "abc" passes.
+- AC-4 Length (BR-11):
+  - a) Given 1 to 80 characters, then "" and 81 characters fail, and " ", "OC" and 80 characters pass.
+  - b) Given at most 500 characters, then "" and 500 characters pass and 501 fail.
+  - c) Given at most 1 character, then "👍🏽", "ł", "é" and "e" followed by U+0301 pass, and "ab" fails.
+
+Composition
+- AC-5 `allOf` (BR-8), of 3 to 5 characters ("A") and at most 4 characters ("B"):
+  - a) Given "abcde", which fails only "B", then it fails with "B"; given "abcdef", which fails both, then it fails with "A".
+  - b) Given "abcd", then it passes.
+- AC-6 `ifPresent` (BR-8):
+  - a) Given `ifPresent` of `required` ("A"), then an absent value passes, "" fails with "A" and "abc" passes.
+  - b) Given `ifPresent` of `allOf` of `required` ("A") and at most 3 characters ("B"), then an absent value passes, "" fails with "A", "abcd" fails with "B" and "abc" passes.
+
+Validator focus
+- AC-7 Leaving a changed field (BR-6, BR-12), each check starting from "":
+  - a) When focus enters and leaves, then it is undetermined.
+  - b) When focus enters, the input becomes "1" and focus leaves, then it is invalid with "Błąd".
+  - c) When focus enters, the input becomes "1" and then "", and focus leaves, then it is invalid.
+  - d) When the input becomes "1" while the field doesn't have focus, and focus then enters and leaves, then it is undetermined; likewise when focus enters, the rule becomes 4 to 10 characters and focus leaves.
+  - e) When focus enters, the input becomes "12" and focus leaves, then it is invalid; when focus enters and leaves again without an input, it stays invalid; when focus enters, the input becomes "123" and focus leaves, it is valid.
+  - f) When focus enters, it takes the input "" again, equal to the last, and focus leaves, then it is invalid.
+  - g) When focus enters, the input becomes "12", its validation is forced and the input becomes "1", then it stays invalid; when it becomes "123", it is valid.
+
+API and build
+- AC-8 (review) Given `ValidationResult`, `ValidationRule` and `Validator`, then they have the public shape in Data, `ValidationRule` is `Sendable` for every input, `Validator` is `Sendable` where its input is, and no declaration takes a `Locale` (Data, BR-9, BR-13).
+- AC-9 (review) Given the target's sources, then they import Foundation only, hold no user-facing copy, String Catalog or resource, and no file reads `Locale.current` or `Locale.autoupdatingCurrent`; no package dependency or product is added (BR-9, BR-13, BR-14).
+- AC-10 The lint command, the tests command (Polish and English configurations) and the iOS build command from `UtilitiesKit/CLAUDE.md` › Commands succeed with no warnings, and the tests run UtilitiesKitTests (BR-13, BR-14).
+- AC-11 (review) Given the package's sources, then they follow `CLAUDE.md` › Code style with one type per file, a file named after its type or the type it extends, and no comments (BR-13).
+- AC-12 Given a rule built with the initializer whose check fails "" with "A" and passes any other text, then "" fails with "A" and "a" passes (Data, BR-1).
+- AC-13 (review) Given `UtilitiesKit/README.md`, then its status line names the validators; given `UtilitiesKit/CLAUDE.md` › Rules, then validators are described as locale-neutral; given `docs/specs/README.md`, then the validation/validators row carries the spec's status (BR-15).
+
+## Open questions
+- —
+
+## Changelog
+- 2026-10-31 Drafted from FinanceTracker's validator implementation: result, rule, focus-aware validator, required and length rules, composition; no `Locale` parameter (Q-1, Q-2) (create-spec)
