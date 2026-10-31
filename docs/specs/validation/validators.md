@@ -1,5 +1,5 @@
 # Validators
-Status: Approved · Level: capability · Repo: UtilitiesKit · Feature: validation · Module or target: UtilitiesKit, UtilitiesKitTests · Depends on: —
+Status: Planned · Level: capability · Repo: UtilitiesKit · Feature: validation · Module or target: UtilitiesKit, UtilitiesKitTests · Depends on: —
 
 ## Goal
 Give every form one way to validate what the user enters. A rule says what a valid input is and fails with the message the form gives it; a validation result is undetermined, valid, or invalid with that one message; a validator decides when a field's error shows: a correct input is valid at once, an error only after forced validation, never as the user types. Foundation only, no DesignKit, no copy; no validation call takes a `Locale`, and a rule that needs one takes it once when built (BR-9).

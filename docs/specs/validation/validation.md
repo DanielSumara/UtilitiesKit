@@ -12,7 +12,7 @@ Validation every form uses: a rule says what a valid input is, a validation resu
 ## Specs
 | Spec | Level | Scope | Mockup | Status |
 |---|---|---|---|---|
-| [validation/validators](validators.md) | capability | Validation result, focus-aware validator, text rules (required, length) and composition; locale only when a rule is built | — | Approved |
+| [validation/validators](validators.md) | capability | Validation result, focus-aware validator, text rules (required, length) and composition; locale only when a rule is built | — | Planned |
 
 ## Later
 - Rules that parse or format with a locale (amount, rate, account number), comparisons, decimal places and parsed values: each arrives with the first form needing it (validators Q-2)
