@@ -5,11 +5,11 @@ import UtilitiesKit
 internal struct DisplayDateFormatterTests {
     private let processLocale: Locale = .current
 
-    private func formatter(_ identifier: String, timeZone zoneIdentifier: String = "UTC") -> DisplayDateFormatter {
+    private func formatter(_ identifier: String, timeZone: TimeZone = .gmt) -> DisplayDateFormatter {
         DisplayDateFormatter(
             locale: Locale(identifier: identifier),
             calendar: Calendar(identifier: .gregorian),
-            timeZone: TimeZone(identifier: zoneIdentifier) ?? .gmt
+            timeZone: timeZone
         )
     }
 
@@ -21,8 +21,9 @@ internal struct DisplayDateFormatterTests {
         #expect(polish.monthTitle(year: 10000, month: 10) == nil)
     }
 
-    @Test func `AC-13 far time zones keep October 2026`() {
-        for zone in ["Pacific/Kiritimati", "Pacific/Pago_Pago"] {
+    @Test func `AC-13 far time zones keep October 2026`() throws {
+        for zoneIdentifier in ["Pacific/Kiritimati", "Pacific/Pago_Pago"] {
+            let zone = try #require(TimeZone(identifier: zoneIdentifier))
             #expect(formatter("pl_PL", timeZone: zone).monthTitle(year: 2026, month: 10) == "Październik 2026")
         }
     }
