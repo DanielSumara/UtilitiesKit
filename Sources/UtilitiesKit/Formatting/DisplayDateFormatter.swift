@@ -16,6 +16,9 @@ public struct DisplayDateFormatter: Sendable {
     }
 
     public func monthTitle(year: Int, month: Int) -> String? {
+        guard (1...12).contains(month), (1...9999).contains(year) else {
+            return nil
+        }
         var zonedCalendar = calendar
         zonedCalendar.timeZone = timeZone
         zonedCalendar.locale = locale

@@ -3,12 +3,40 @@ import Testing
 import UtilitiesKit
 
 internal struct DisplayDateFormatterTests {
-    private func formatter(_ identifier: String) -> DisplayDateFormatter {
+    private let processLocale: Locale = .current
+
+    private func formatter(_ identifier: String, timeZone zoneIdentifier: String = "UTC") -> DisplayDateFormatter {
         DisplayDateFormatter(
             locale: Locale(identifier: identifier),
             calendar: Calendar(identifier: .gregorian),
-            timeZone: TimeZone(identifier: "UTC") ?? .gmt
+            timeZone: TimeZone(identifier: zoneIdentifier) ?? .gmt
         )
+    }
+
+    @Test func `AC-5 months and years out of range give nil`() {
+        let polish = formatter("pl_PL")
+        #expect(polish.monthTitle(year: 2026, month: 0) == nil)
+        #expect(polish.monthTitle(year: 2026, month: 13) == nil)
+        #expect(polish.monthTitle(year: 0, month: 10) == nil)
+        #expect(polish.monthTitle(year: 10000, month: 10) == nil)
+    }
+
+    @Test func `AC-13 far time zones keep October 2026`() {
+        for zone in ["Pacific/Kiritimati", "Pacific/Pago_Pago"] {
+            #expect(formatter("pl_PL", timeZone: zone).monthTitle(year: 2026, month: 10) == "Październik 2026")
+        }
+    }
+
+    @Test func `AC-6 no-argument formatter follows the process language`() {
+        let title = DisplayDateFormatter().monthTitle(year: 2026, month: 10)
+        switch processLocale.language.languageCode?.identifier {
+        case "pl":
+            #expect(title == "Październik 2026")
+        case "en":
+            #expect(title == "October 2026")
+        default:
+            #expect(title?.isEmpty == false)
+        }
     }
 
     @Test func `AC-2 en_GB and en_US give October 2026`() {
