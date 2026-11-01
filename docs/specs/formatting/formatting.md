@@ -13,7 +13,7 @@ Locale-aware text for the apps: dates, starting with the month title, and later 
 ## Specs
 | Spec | Level | Scope | Mockup | Status |
 |---|---|---|---|---|
-| [formatting/month-title](month-title.md) | capability | Month and year as one title in a locale, calendar and time zone, with a process fallback | — | Draft |
+| [formatting/month-title](month-title.md) | capability | Month and year as one title in a locale, calendar and time zone, with a process fallback | — | Approved |
 
 ## Later
 - Other date outputs (day, short date, date and time) and parsing date strings in several formats: each arrives with the first spec that needs it (month-title Q-1, Q-3)
