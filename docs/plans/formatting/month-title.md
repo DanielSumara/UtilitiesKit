@@ -26,14 +26,14 @@ Depends on: —
 - Done when: tests `AC-1`, `AC-4` pass in both configurations; the en_GB, en_US and ja_JP tests of S1 still pass; lint clean; `UtilitiesKit` builds for iOS and macOS with no warnings
 - Manual ACs: —
 
-### S3 — Core: bounds and process fallback
-- ACs: AC-5, AC-6
+### S3 — Core: bounds, time zones and process fallback
+- ACs: AC-5, AC-6, AC-13
 - Area: UtilitiesKit/Sources/UtilitiesKit/Formatting, UtilitiesKit/Tests/UtilitiesKitTests
 - Depends on: S1, S2
 - Skills: —
 - Review: full
-- Builds: a bounds guard in `monthTitle(year:month:)` returning `nil` for a month outside 1...12 or a year outside 1...9999 before any date arithmetic, so the title never rolls into the neighbouring month (BR-4); `DisplayDateFormatter()` with no arguments taking the `.autoupdatingCurrent` fallback of all three values (BR-1, BR-5); tests in `DisplayDateFormatterTests.swift` for months 0 and 13, years 0 and 10000, and for the no-argument formatter compared against the process language read as a stored `let locale: Locale = .current` (UtilitiesKitTests links `UtilitiesKit` only, so no TestUtilitiesKit helper and no `Package.swift` change)
-- Done when: tests `AC-5`, `AC-6` pass in both configurations (Polish configuration expects "Październik 2026", English "October 2026"); AC-1 to AC-4 tests still pass; lint clean; `UtilitiesKit` builds for iOS and macOS with no warnings
+- Builds: a bounds guard in `monthTitle(year:month:)` returning `nil` for a month outside 1...12 or a year outside 1...9999 before any date arithmetic, so the title never rolls into the neighbouring month (BR-4); `DisplayDateFormatter()` with no arguments taking the `.autoupdatingCurrent` fallback of all three values (BR-1, BR-5); tests in `DisplayDateFormatterTests.swift` for months 0 and 13, years 0 and 10000, and for Pacific/Kiritimati and Pacific/Pago_Pago October 2026 (the date built and formatted in the formatter's own time zone, BR-4), and for the no-argument formatter compared against the process language read as a stored `let locale: Locale = .current` (UtilitiesKitTests links `UtilitiesKit` only, so no TestUtilitiesKit helper and no `Package.swift` change)
+- Done when: tests `AC-5`, `AC-6`, `AC-13` pass in both configurations (Polish configuration expects "Październik 2026", English "October 2026"); AC-1 to AC-4 tests still pass; lint clean; `UtilitiesKit` builds for iOS and macOS with no warnings
 - Manual ACs: —
 
 ### S4 — Owners and verification
@@ -42,7 +42,7 @@ Depends on: —
 - Depends on: S1, S2, S3
 - Skills: —
 - Review: diff-only
-- Builds: —
+- Builds: `UtilitiesKit/README.md`'s status line names `DisplayDateFormatter`; the rule lines in both `CLAUDE.md` and the three `.swiftlint.yml` already carry BR-8's wording (committed with the spec), so they are only reviewed
 - Done when: `UtilitiesKit/README.md`'s status line names `DisplayDateFormatter`; `UtilitiesKit/CLAUDE.md` › Rules and the root `CLAUDE.md` › Architecture rules match AC-11 (date formatters take an injected locale, calendar and time zone with `.autoupdatingCurrent` fallbacks in the kit; the root rule allows a singleton as a passed or stored value and never as a member call, with no line forbidding `.current` as a stored value); the `docs/specs/README.md` row and the `formatting/formatting.md` row carry the spec's status, kept in sync; AC-12 reviewed (the same `no_singletons` message in all three `.swiftlint.yml`, `injected_clock` checking only `Date()` in UtilitiesKit and HomeBudgetApps, the listed pass and fail probes); AC-8 reviewed (Foundation-only imports in the new sources, no copy, String Catalog or resource, no `Date()`, `Locale.current`, `Calendar.current` or `TimeZone.current` read, `Package.swift` unchanged); AC-10 reviewed (one type per file, file named after its type, no comments); AC-9: lint, the Polish and English test-plan configurations and the `UtilitiesKit` and `TestUtilitiesKit` iOS builds succeed with no warnings and the tests run UtilitiesKitTests
 - Manual ACs: —
 
@@ -61,6 +61,7 @@ Depends on: —
 | AC-10 | S4 | review (one type per file, file names, no comments) |
 | AC-11 | S4 | review (README status line, both CLAUDE.md rules, both index rows) |
 | AC-12 | S4 | review (three `no_singletons` messages, `injected_clock` scope, the named pass and fail probes) |
+| AC-13 | S3 | tests `AC-13` (Pacific/Kiritimati and Pacific/Pago_Pago October 2026 "Październik 2026") |
 
 ## Manual verification
 - — Every AC is automated or code review.
