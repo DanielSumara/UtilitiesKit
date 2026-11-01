@@ -1,5 +1,5 @@
 # Month title
-Status: Planned · Level: capability · Repo: UtilitiesKit · Feature: formatting · Module or target: UtilitiesKit, UtilitiesKitTests · Depends on: —
+Status: Implemented · Level: capability · Repo: UtilitiesKit · Feature: formatting · Module or target: UtilitiesKit, UtilitiesKitTests · Depends on: —
 
 ## Goal
 A month and its year as one title in a locale, calendar and time zone: "Październik 2026" in Polish, "October 2026" in English, "2026年10月" in Japanese. One preconfigured `DisplayDateFormatter` produces it and later date outputs join it (Q-4); the title is either right or absent, never a neighbouring month (BR-4). A caller may leave out the locale, calendar or time zone, and the formatter falls back to `.autoupdatingCurrent` (Q-6).
@@ -77,3 +77,4 @@ A formatter is Polish (pl_PL), Gregorian and Europe/Warsaw unless a check gives 
 - 2026-11-01 Revised in session: `DisplayDateFormatter` with `monthTitle(year:month:)`, year and month required, no day or time components; `.autoupdatingCurrent` fallbacks for locale, calendar and time zone; singleton values allowed as arguments, parameter defaults and properties, member access still prohibited, with the lint rule and owners updated (Q-4, Q-5, Q-6) (create-spec)
 - 2026-11-01 Revalidated and approved: the formatter's calendar named as the month's source (BR-2); the root `CLAUDE.md` owner split so the formatter default stays in UtilitiesKit/CLAUDE.md, the singleton rule stays in root and no root line still forbids `.current` as a stored value (BR-8, AC-11); the lint check named per repo with the three `no_singletons` messages in sync (AC-12) (review round 1)
 - 2026-11-01 AC-13 added: the title stays in the requested month in time zones far from the process one (BR-4, BR-5); revalidated, approved and planned again with AC-13 in S3 (review round 2)
+- 2026-11-01 Implemented: [plan](../../plans/formatting/month-title.md), a3ce5636a4584fee05589c137c13ed9b1835ae66..9a43fe7

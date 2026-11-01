@@ -1,8 +1,8 @@
 # Month title — implementation plan
 Spec: UtilitiesKit/docs/specs/formatting/month-title.md
 Repo: UtilitiesKit
-Status: Ready
-Run base: —
+Status: Done
+Run base: a3ce5636a4584fee05589c137c13ed9b1835ae66
 Depends on: —
 
 ## Slices
@@ -76,10 +76,10 @@ Depends on: —
 ## Progress
 | Slice | Status | Base | Head | Review |
 |---|---|---|---|---|
-| S1 | Pending | — | — | — |
-| S2 | Pending | — | — | — |
-| S3 | Pending | — | — | — |
-| S4 | Pending | — | — | — |
+| S1 | Done | a3ce563 | 5b1724b | 0 fixed / 0 rejected |
+| S2 | Done | 5b1724b | 684dc91 | 0 fixed / 0 rejected |
+| S3 | Done | 684dc91 | 1ed8dee | 0 fixed / 0 rejected |
+| S4 | Done | 1ed8dee | f717a44 | 0 fixed / 0 rejected |
 
 ## Open questions
 - None
