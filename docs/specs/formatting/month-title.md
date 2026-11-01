@@ -1,5 +1,5 @@
 # Month title
-Status: Approved · Level: capability · Repo: UtilitiesKit · Feature: formatting · Module or target: UtilitiesKit, UtilitiesKitTests · Depends on: —
+Status: Planned · Level: capability · Repo: UtilitiesKit · Feature: formatting · Module or target: UtilitiesKit, UtilitiesKitTests · Depends on: —
 
 ## Goal
 A month and its year as one title in a locale, calendar and time zone: "Październik 2026" in Polish, "October 2026" in English, "2026年10月" in Japanese. One preconfigured `DisplayDateFormatter` produces it and later date outputs join it (Q-4); the title is either right or absent, never a neighbouring month (BR-4). A caller may leave out the locale, calendar or time zone, and the formatter falls back to `.autoupdatingCurrent` (Q-6).
