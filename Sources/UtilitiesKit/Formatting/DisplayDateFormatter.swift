@@ -26,7 +26,14 @@ public struct DisplayDateFormatter: Sendable {
         formatter.locale = locale
         formatter.calendar = zonedCalendar
         formatter.timeZone = timeZone
-        formatter.setLocalizedDateFormatFromTemplate("yMMMM")
-        return formatter.string(from: date)
+        formatter.setLocalizedDateFormatFromTemplate("yLLLL")
+        return capitalizingFirstCharacter(of: formatter.string(from: date))
+    }
+
+    private func capitalizingFirstCharacter(of title: String) -> String {
+        guard let first = title.first else {
+            return title
+        }
+        return String(first).uppercased(with: locale) + title.dropFirst()
     }
 }
